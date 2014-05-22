@@ -11,6 +11,16 @@ package hashTesting;
  */
 public class WME
 {
+     /* catagories for comparing two WMEs to each other */
+     public static final int ID = 1;    //compare IDs
+     public static final int ATTR = 2;  //compare ATTRs
+     public static final int VAL = 4;   //compare VALs
+
+
+    /** specifies what components of two WMEs are compared when determining if
+        they are equal (see {@link #equals}).*/
+    public static final int COMPARE_TYPE = ATTR + VAL;
+    
     // instance variables - replace the example below with your own
     public String id;
     public String attribute;
@@ -220,14 +230,43 @@ public class WME
     @Override
     public boolean equals(Object otherObj)
     {
+       return equalsWithType(otherObj, WME.COMPARE_TYPE);
+            
+    }//equals
+
+    /**
+     * compares the components of another WME and this one.
+     * 
+     * @param otherObj - other WME to compare to
+     * @param compareType - which components to compare as a sum of ID, 
+     *                       ATTR or VAL (constants defined in this class)
+     * 
+     *  
+     * @return true if given WMEs match*/
+    public boolean equalsWithType(Object otherObj, int compareType)
+    {
         //make sure we've been given a WME
         if (! (otherObj instanceof WME)) return false;
         WME other = (WME)otherObj;
 
-        //compare them
-        return (other.attribute.equals(this.attribute) &&
-                other.value.equals(this.value) );
-    }//equals
+        //compare them using the directive specified in COMPARE_TYPE
+        if ((compareType & ID) > 0)
+        {
+            if (! other.id.equalsIgnoreCase(this.id)) return false;
+        }
+        if ((compareType & ATTR) > 0)
+        {
+            if (! other.attribute.equalsIgnoreCase(this.attribute)) return false;
+        }
+        if ((compareType & VAL) > 0)
+        {
+            if (! other.value.equalsIgnoreCase(this.value)) return false;
+        }
 
+        return true;
+            
+    }//equals
+    
+    
     
 }//class WME
