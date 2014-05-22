@@ -1,0 +1,132 @@
+package hashTesting;
+
+import static org.junit.Assert.*;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+/**
+ * The test class HashTest tests the various methods in the HashFn class.
+ *
+ * @author  Alexandra Warlen
+ * @version Wednesday May 14, 2014
+ */
+public class HashFnTest extends RandomHashFn
+{
+    /**
+     * Default constructor for test class HashTest
+     */
+    public HashFnTest()
+    {
+        super(HashFn.CODE_SIZE);
+    }
+
+    /**
+     * Sets up the test fixture.
+     *
+     * Called before every test case method.
+     */
+    @Before
+    public void setUp()
+    {
+    }
+    
+    
+    /**
+     * Tests hash() method in HashFn class.
+     *
+     */
+    @Test
+    public void testRandomHashFn()
+    {
+        // create test episode
+        WME testWME = new WME();
+        WME test2WME = new WME();
+        WME[] episode = new WME[2];
+        episode[0] = testWME;
+        episode[1] = test2WME;
+        
+        // check to make sure each index in array of 32 bits has been initialized to 0.
+        int[] test = hash(episode);
+        assertTrue(test[0] == 0 || test[0] == 1);
+        assertTrue(test[super.codeSize-1] == 0 || test[super.codeSize-1] == 1);
+    }
+    
+    @Test
+    public void testDummyHashFn()
+    {
+        // create test episode
+        WME testWME = new WME();
+        WME test2WME = new WME();
+        WME[] episode = new WME[2];
+        episode[0] = testWME;
+        episode[1] = test2WME;
+        
+        // check to make sure each index in array of 32 bits has been initialized to 0.
+        int[] test = hash(episode);
+        assertEquals(test[0], 0);
+        assertEquals(test[super.codeSize-1], 0);
+    }
+    
+    /**
+     * tests the hash() method in FoldingHashFn
+     */
+    @Test
+    public void testFoldingHashFn()
+    {
+        // create first episode
+        WME[] ep = new WME[3];
+        ep[0] = new WME("(S1 ^foo 1)");  //index 0
+        ep[1] = new WME("(S1 ^bar 2)");  //index 1
+        ep[2] = new WME("(S1 ^baz 3)");  //index 2
+
+        //Test first episode
+        FoldingHashFn fn = new FoldingHashFn(4);
+        int[] test = fn.hash(ep);
+        assertEquals(test[0], 1);
+        assertEquals(test[1], 1);
+        assertEquals(test[2], 1);
+        assertEquals(test[3], 0);
+
+        // create second episode
+        ep = new WME[3];
+        ep[0] = new WME("(S1 ^foo 44)");  //index 3
+        ep[1] = new WME("(S1 ^bar 2)");   //index 1
+        ep[2] = new WME("(S1 ^baz 3)");   //index 2
+
+        //Test second episode
+        test = fn.hash(ep);
+        assertEquals(test[0], 0);
+        assertEquals(test[1], 1);
+        assertEquals(test[2], 1);
+        assertEquals(test[3], 1);
+
+        // create third episode
+        ep = new WME[3];
+        ep[0] = new WME("(S1 ^foo 44)"); //index 3
+        ep[1] = new WME("(S1 ^bar 2)");  //index 1
+        ep[2] = new WME("(S1 ^baz 55)"); //index 0 (reused)
+
+        //Test second episode
+        test = fn.hash(ep);
+        assertEquals(test[0], 1);
+        assertEquals(test[1], 1);
+        assertEquals(test[2], 0);
+        assertEquals(test[3], 1);
+
+    }//testFoldingHashFn
+    
+    /**
+     * Tears down the test fixture.
+     *
+     * Called after every test case method.
+     */
+    @After
+    public void tearDown()
+    {
+    }
+    
+}
+
+    

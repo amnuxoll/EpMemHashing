@@ -1,0 +1,167 @@
+package unitTests;
+import static org.junit.Assert.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+/**
+ * The test class WMETest tests that the proper WME is created given either 3 strings or one string with 
+ * three fields.
+ *
+ * @author  Alexandra Warlen
+ * @version Wednesday May 14, 2014
+ */
+public class WMETest extends WME
+{
+    /**
+     * Default constructor for test class WMETest
+     */
+    public WMETest()
+    {
+    }
+
+    /**
+     * Sets up the test fixture.
+     *
+     * Called before every test case method.
+     */
+    @Before
+    public void setUp()
+    {
+    }
+    
+    /**
+     * Tests 3 string WME constructor.
+     *
+     */
+    @Test
+    public void testWMEConst()
+    {
+        WME test = new WME("C1", "hello", "5");
+        
+        assertEquals(test.id, "C1");
+        assertEquals(test.attribute, "hello");
+        assertEquals(test.value, "5");
+        
+        WME test2 = new WME("A1", "hello", null);
+        
+        assertEquals(test2.id, "A1");
+        assertEquals(test2.attribute, "hello");
+        assertEquals(test2.value, null);
+        
+        
+    }
+    
+    /**
+     * Tests single string WME constructor.
+     *
+     */
+    @Test
+    public void testWMEConst2()
+    {
+        // base test
+        WME test = new WME("(C1 ^hello 5)");
+        
+        assertEquals(test.id, "C1");
+        assertEquals(test.attribute, "hello");
+        assertEquals(test.value, "5");
+        
+        // if parentheses aren't given
+        WME test2 = new WME("B4 test2 right");
+        
+        assertEquals(test2.id, null);
+        assertEquals(test2.attribute, null);
+        assertEquals(test2.value, null);
+        
+        //if carrot isn't put before attribute
+        WME test3 = new WME("(A2 test3 up)");
+        
+        assertEquals(test3.id, null);
+        assertEquals(test3.attribute, null);
+        assertEquals(test3.value, null);
+        
+        // if first field isn't in format of id
+        WME test4 = new WME("(C14b ^hello 5)");
+        assertEquals(isID(test4.id), false);
+        assertEquals(isID(test4.attribute), false);
+        assertEquals(isID(test4.value), false);
+        
+    }
+    
+    /**
+     * Tests isID() method.
+     *
+     */
+    @Test
+    public void testIsID()
+    {
+        WME test = new WME("(C1 ^hello 5)");
+        // test values of WME created
+        assertEquals(isID(test.id), true);
+        assertEquals(isID(test.attribute), false);
+        assertEquals(isID(test.value), false);
+       
+        // extra test cases
+        // if letter is not at beginning
+        assertEquals(isID("235x879"), false);
+        // if there is a random character within the number field
+        assertEquals(isID("C235'879"), false);
+        // if there is no letter
+        assertEquals(isID("235^879"), false);
+        // if there is an extra letter 
+        assertEquals(isID("C45d"), false);
+        
+        // if id field is not in proper format, all values should be null
+        WME test2 = new WME("(C14b ^hello 5)");
+        assertEquals(isID(test2.id), false);
+        assertEquals(isID(test2.attribute), false);
+        assertEquals(isID(test2.value), false);
+    }
+
+    /**
+     * Tests isNum() method.
+     *
+     */
+    @Test
+    public void testIsNum()
+    {
+        WME test = new WME("(C1 ^hello 5)");
+        // test values of WME created
+        assertEquals(isNum(test.id), false);
+        assertEquals(isNum(test.attribute), false);
+        assertEquals(isNum(test.value), true);
+        
+        // extra test cases
+        assertEquals(isNum("4324y"), false);
+        assertEquals(isNum("93421"), true);
+        assertEquals(isNum("-175"), true);
+    }
+    
+    /**
+     * Tests equals() method.
+     *
+     */
+    @Test
+    public void testEquals()
+    {
+        WME test1 = new WME("(C1 ^hello 5)");
+        WME test2 = new WME("(C1 ^hello 5)");
+        WME test3 = new WME("(C2 ^hello 5)");
+        WME test4 = new WME("(C1 ^hello 6)");
+
+        assertEquals(test1.equals(test2), true);
+        assertEquals(test1.equals(test3), true);
+        assertEquals(test1.equals(test4), false);
+    }
+    
+    /**
+     * Tears down the test fixture.
+     *
+     * Called after every test case method.
+     */
+    @After
+    public void tearDown()
+    {
+    }
+
+}
