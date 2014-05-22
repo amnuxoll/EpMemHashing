@@ -11,8 +11,9 @@ import java.util.ArrayList;
  */
 public class Dictionary
 {
-	
-	private int typeOfWord;
+	/* compareType specifies the parts of the WME to consider when comparing two
+     * WMEs (@see WME#equals)*/
+	private int compareType;
 	
 	/* the dictionary catalogs the words that appear in the episodes with their
 	 * respective occurrences
@@ -24,13 +25,13 @@ public class Dictionary
 	 * 
 	 * 
 	 * @param episodeList
-	 * @param wordType
+	 * @param compareType
 	 */
 	
-	public Dictionary (ArrayList<WME[]> episodeList, int wordType)
+	public Dictionary (ArrayList<WME[]> episodeList, int compareType)
 	{
-		dictionary = new ArrayList<Entry>();
-		typeOfWord = wordType;
+		this.dictionary = new ArrayList<Entry>();
+		this.compareType = compareType;
 		//adds the WME's to the dictionary by episode
 		for(int i = 0; i < episodeList.size(); i++){
 			addEpisode(i, episodeList.get(i));
@@ -41,15 +42,15 @@ public class Dictionary
 	/**
 	 * findWordLoc
 	 * 
-	 * returns the location of the of the word in the dictionary
+	 * returns the location of the of a WME in the dictionary
 	 * 
 	 * @param entry - the string translation of the word
 	 * @return - index of the word
 	 */
-	public int findWordLoc(String entry)
+	public int findWordLoc(WME entry)
 	{
 		for(int i=0; i<dictionary.size(); i++){
-			if(entry.equalsIgnoreCase(dictionary.get(i).word)){
+			if(entry.equalsWithType(dictionary.get(i).entry, this.compareType)){
 				return i;
 			}
 		}
@@ -72,11 +73,11 @@ public class Dictionary
 		//recurse through episodes
 		for(WME entry: episode){
 			
-			wordLoc = findWordLoc(Entry.toWord(typeOfWord, entry));
+			wordLoc = findWordLoc(entry);
 			
 			//if the word does not exist yet, add the word
 			if(wordLoc < 0){
-				dictionary.add(new Entry(typeOfWord,entry));
+				dictionary.add(new Entry(compareType,entry));
 				wordLoc = dictionary.size() - 1;
 			}
 			
@@ -87,6 +88,8 @@ public class Dictionary
 		
 		//resort
 		sortByOccurrence(0, dictionary.size());
+		
+		//Collections.sort(dictionary);
 	}//addEpisode
 	
 	
@@ -135,7 +138,7 @@ public class Dictionary
 			}
 			
 		}
-		return (ArrayList<Entry>) dictionary.subList(start, end);
+		return new ArrayList<Entry>(dictionary.subList(start, end));
 	}
 	
 	/**
@@ -149,7 +152,6 @@ public class Dictionary
 	
 	public Entry getWordAt(int n)
 	{
-		sortByOccurrence(0, dictionary.size());
 		return dictionary.get(n);
 	}
 	

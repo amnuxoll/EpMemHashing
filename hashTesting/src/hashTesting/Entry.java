@@ -2,76 +2,50 @@ package hashTesting;
 
 import java.util.ArrayList;
 
-public class Entry {
+/**
+ * Tracks all occurances of a particular WME that has appeared in at least one
+ * episode.  In particular, tracks how many times it has appeared in a given
+ * episode and also how many times in any episode.
+ * 
+ * @author Alexandra Warlen
+ * @author Allie Seibert
+ * @version May 2014
+ */
+public class Entry implements Comparable<Entry> {
 
-	/* the word in question*/
-	protected String word;
+	/** the word in question*/
+	protected WME entry;
 	
-	/*occurrences are an array of int[2] such that:
-	 * digit[0] - the episode  
-	 * digit[1] - occurrences of the word in the episode specified by digit[0]
+	/** an occurrence of WME is represented by an array of int[2] such that:
+	 * digit[0] - the episode where it occured
+	 * digit[1] - num of occurrences in the episode specified by digit[0]
 	 */
 	protected ArrayList<int[]> occurrences;
 	
 	
-	/*typeOfWord specifies the part of the WME the dictionary categorizes*/
-	protected int typeOfWord;
-	
-	/*catagories for typeOfWord*/
-	public static final int ID = 0;
-	public static final int ATTR = 1;
-	public static final int VAL = 2;
-	public static final int VAL_ATTR = 3;
+	/** compareType specifies the parts of the WME to consider when comparing two
+     * WMEs (@see WME#equals)*/
+	protected int compareType;
 	
 	/**
 	 * ctor
 	 * 
-	 * @param wordType
+	 * @param comparetype
 	 * @param entry
 	 */
-	public Entry(int wordType, WME entry)
+	public Entry(int compareType, WME entry)
 	{
-		typeOfWord = wordType;
-		word = toWord(typeOfWord, entry);
-		occurrences = new ArrayList<int[]>();
+		this.compareType = compareType;
+		this.entry = entry;
+		this.occurrences = new ArrayList<int[]>();
 	}
 	
-	
 	/**
-	 * toWord
-	 * 
-	 * translates a WME into a word string specified by wordType,
-	 * this is static so that it may be used in Dictionary
-	 * 
-	 * @param wordType
-	 * @param entry
-	 * @return
-	 */
-	public static String toWord(int wordType, WME entry)
-	{
-			if (wordType == ID){
-				return entry.id.toString();
-			}
-			if (wordType == ATTR){
-				return entry.attribute;
-			}
-			if (wordType == VAL){
-				return entry.value;
-			}
-			if (wordType == VAL_ATTR){
-				return entry.attribute + " " + entry.value;
-			}
-			System.err.print("Incorrect Word Type");
-			return null; //TODO
-	}
-	
-	
-	/**
-	 * addOccurrences
+	 * addOccurrence
 	 * 
 	 * increments the number of occurrences for an entry
 	 * 
-	 * @param episodeIndex
+	 * @param episodeIndex the episode where it occured
 	 */
 	public void addOccurrence(int episodeIndex)
 	{
@@ -109,7 +83,16 @@ public class Entry {
 		
 		return sum;
 	}
+
+	/** compares two entries based upon their total number of occurences */ 
+	@Override
+	public int compareTo(Entry otherEntry) {
+		int myOccur = getSumOccurrences();
+		int otherOccur = otherEntry.getSumOccurrences();
+		
+		return myOccur - otherOccur;
+	}
 	
 
 	
-}
+}//class Entry

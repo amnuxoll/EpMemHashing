@@ -7,8 +7,12 @@ import org.junit.Test;
 public class DictionaryTest {
 
 	@Test
-	public void test() {
-		fail("Not yet implemented");
+	public void testCtor() {
+		Dictionary testDict = new Dictionary(MainTest.makeQuickEpList(), WME.ATTR);
+		
+		WME w = new WME("(S1 ^alligator eats)");
+		assertEquals(testDict.findWordLoc(w), 1);
+		
 	}
 
 }

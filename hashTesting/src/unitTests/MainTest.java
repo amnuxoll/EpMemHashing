@@ -10,6 +10,7 @@ package unitTests;
  */
 import static org.junit.Assert.*;
 import hashTesting.*;
+import java.util.ArrayList;
 
 import org.junit.After;
 import org.junit.Before;
@@ -30,6 +31,34 @@ public class MainTest extends Main
     {
         super(123456);
     }
+    
+    /**
+     * a helpful method for quickly generating a small episode list
+     */
+    public static ArrayList<WME[]> makeQuickEpList()
+    {
+        // create test episode
+        WME testWME = new WME("(s1 ^color red)");
+        WME test2WME = new WME("(s1 ^color blue)");
+        WME[] episode1 = new WME[2];
+        episode1[0] = testWME;
+        episode1[1] = test2WME;
+        
+        // create another test episode
+        testWME = new WME("(s1 ^color green)");
+        test2WME = new WME("(s1 ^alligator eats)");
+        WME[] episode2 = new WME[2];
+        episode2[0] = testWME;
+        episode2[1] = test2WME;
+
+        //add those to the episodeList
+        ArrayList<WME[]> epList = new ArrayList<WME[]>();  
+        epList.add(episode1);
+        epList.add(episode2);
+        
+        return epList;
+    	
+    }//makeQuickEpList
 
     /**
      * Sets up the test fixture.
@@ -107,25 +136,8 @@ public class MainTest extends Main
     @Test
     public void testCalcSuccess()
     {
-        // create test episode
-        WME testWME = new WME("(s1 ^color red)");
-        WME test2WME = new WME("(s1 ^color blue)");
-        WME[] episode1 = new WME[2];
-        episode1[0] = testWME;
-        episode1[1] = test2WME;
-        
-        // create another test episode
-        testWME = new WME("(s1 ^color green)");
-        test2WME = new WME("(s1 ^alligator eats)");
-        WME[] episode2 = new WME[2];
-        episode2[0] = testWME;
-        episode2[1] = test2WME;
-
-        //add those to the episodeList
-        episodeList.add(episode1);
-        episodeList.add(episode2);
+    	episodeList.addAll(makeQuickEpList());
     	
-        
         //Since we used a fixed random number seed, these results should always
         //be the same
         RandomHashFn myFn = new RandomHashFn(128);
