@@ -2,19 +2,22 @@ package hashTesting;
 
 import java.util.ArrayList;
 
+/**
+ * A collection of WMEs and how often each have appeared
+ * 
+ * @author Alexandra Warlen
+ * @author Allie Seibert
+ * @version May 2014
+ */
 public class Dictionary
 {
 	
-	/*occurrences are an array of int[2] such that:
-	 * digit[0] - the episode  
-	 * digit[1] - occurrences of the word in the episode specified by digit[0]
-	 */
 	private int typeOfWord;
 	
 	/* the dictionary catalogs the words that appear in the episodes with their
 	 * respective occurrences
 	 */
-	private ArrayList<Word> dictionary;
+	private ArrayList<Entry> dictionary;
 	
 	/**
 	 * ctor
@@ -26,7 +29,7 @@ public class Dictionary
 	
 	public Dictionary (ArrayList<WME[]> episodeList, int wordType)
 	{
-		dictionary = new ArrayList<Word>();
+		dictionary = new ArrayList<Entry>();
 		typeOfWord = wordType;
 		//adds the WME's to the dictionary by episode
 		for(int i = 0; i < episodeList.size(); i++){
@@ -69,11 +72,11 @@ public class Dictionary
 		//recurse through episodes
 		for(WME entry: episode){
 			
-			wordLoc = findWordLoc(Word.toWord(typeOfWord, entry));
+			wordLoc = findWordLoc(Entry.toWord(typeOfWord, entry));
 			
 			//if the word does not exist yet, add the word
 			if(wordLoc < 0){
-				dictionary.add(new Word(typeOfWord,entry));
+				dictionary.add(new Entry(typeOfWord,entry));
 				wordLoc = dictionary.size() - 1;
 			}
 			
@@ -97,14 +100,14 @@ public class Dictionary
 	 * @param end - end index, exclusive
 	 * @return
 	 */
-	private ArrayList<Word> sortByOccurrence(int start, int end)
+	private ArrayList<Entry> sortByOccurrence(int start, int end)
 	{
 		if(end-start >= 2){
 			int midpoint = (start + end) /2;
 			
 			// sorting each half of the list and creating a copy of each half
-			ArrayList<Word> aList = sortByOccurrence(start, midpoint);
-			ArrayList<Word> bList = sortByOccurrence(midpoint, end);
+			ArrayList<Entry> aList = sortByOccurrence(start, midpoint);
+			ArrayList<Entry> bList = sortByOccurrence(midpoint, end);
 			
 			int aIndex = 0;
 			int bIndex = 0;
@@ -132,7 +135,7 @@ public class Dictionary
 			}
 			
 		}
-		return (ArrayList<Word>) dictionary.subList(start, end);
+		return (ArrayList<Entry>) dictionary.subList(start, end);
 	}
 	
 	/**
@@ -144,7 +147,7 @@ public class Dictionary
 	 * @return
 	 */
 	
-	public Word getWordAt(int n)
+	public Entry getWordAt(int n)
 	{
 		sortByOccurrence(0, dictionary.size());
 		return dictionary.get(n);
