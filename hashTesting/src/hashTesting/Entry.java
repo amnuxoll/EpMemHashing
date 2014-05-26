@@ -64,6 +64,32 @@ public class Entry implements Comparable<Entry> {
 		
 	}
 	
+	/**
+	 * allows public access to compareType variable.
+	 * @return int value of compare type
+	 */
+	public int getCompType()
+	{
+		return this.compareType;
+	}
+	
+	/**
+	 * allows public access to occurrences.
+	 * @return  occurrences of type ArrayList<int[]> 
+	 */
+	public ArrayList<int[]> getOccurrences()
+	{
+		return this.occurrences;
+	}
+	
+	/**
+	 * allows public access to entry variable.
+	 * @return WME entry
+	 */
+	public WME getEntry()
+	{
+		return this.entry;
+	}
 	
 	/**
 	 * getSumOccurences
@@ -93,9 +119,9 @@ public class Entry implements Comparable<Entry> {
 		return otherOccur - myOccur;
 	}
 	
-	public WME getWME(){
-		return this.entry;
-	}
+	
+	
+	
 	
 
 	
