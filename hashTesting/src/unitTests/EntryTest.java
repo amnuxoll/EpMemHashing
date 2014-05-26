@@ -67,6 +67,65 @@ public class EntryTest extends MainTest {
     	assertEquals(testEntry.getOccurrences().get(3)[0], 7);
     	assertEquals(testEntry.getOccurrences().get(3)[1], 2);
     }
+    
+    /**
+     * Tests getting the sum of the total occurrences of an entry
+     *
+     */
+    @Test
+    public void testGetSumOccur()
+    {
+    	ArrayList<WME[]> testList = makeQuickEpList();
+    	Entry testEntry = new Entry(3, testList.get(0)[1]);
+    	
+    	// Add some occurrences
+    	testEntry.addOccurrence(1);
+    	testEntry.addOccurrence(2);
+    	testEntry.addOccurrence(2);
+    	testEntry.addOccurrence(2);
+    	testEntry.addOccurrence(5);
+    	testEntry.addOccurrence(7);
+    	testEntry.addOccurrence(7);
+    	
+    	assertEquals(testEntry.getSumOccurrences(), 7);
+    	
+    	// Add one more and retry
+    	testEntry.addOccurrence(10);
+    	
+    	assertEquals(testEntry.getSumOccurrences(), 8);
+    }
+    
+    /**
+     * Tests compareTo method, which is not testing if they are equal entries,
+     * just tests if they have the same number of occurrences, for use by the
+     * sorting of the dictionary.
+     *
+     */
+    @Test
+    public void testCompareTo()
+    {
+    	ArrayList<WME[]> testList = makeQuickEpList();
+    	// make 2 entries
+    	Entry entry1 = new Entry(3, testList.get(0)[1]);
+    	Entry entry2 = new Entry(3, testList.get(0)[1]);
+    	// add some occurrences
+    	entry1.addOccurrence(1);
+    	entry1.addOccurrence(2);
+    	entry1.addOccurrence(3);
+    	
+    	entry2.addOccurrence(5);
+    	entry2.addOccurrence(5);
+    	
+    	
+    	// they are equal if they have the same number of total occurrences
+    	assertEquals(entry1.compareTo(entry2), -1);
+    	
+    	// make them equal and try again
+    	entry2.addOccurrence(8);
+    	
+    	assertEquals(entry1.compareTo(entry2), 0);
+    	assertEquals(entry2.compareTo(entry1), 0);
+    }
 }
 
 
