@@ -45,7 +45,7 @@ public class Entry implements Comparable<Entry> {
 	 * 
 	 * increments the number of occurrences for an entry
 	 * 
-	 * @param episodeIndex the episode where it occured
+	 * @param episodeIndex the episode where it occurred
 	 */
 	public void addOccurrence(int episodeIndex)
 	{
@@ -68,7 +68,7 @@ public class Entry implements Comparable<Entry> {
 	/**
 	 * getSumOccurences
 	 * 
-	 * returns the total number of occurences of the specified word
+	 * returns the total number of occurrences of the specified word
 	 * 
 	 * 
 	 * @return sum
@@ -90,7 +90,11 @@ public class Entry implements Comparable<Entry> {
 		int myOccur = getSumOccurrences();
 		int otherOccur = otherEntry.getSumOccurrences();
 		
-		return myOccur - otherOccur;
+		return otherOccur - myOccur;
+	}
+	
+	public WME getWME(){
+		return this.entry;
 	}
 	
 

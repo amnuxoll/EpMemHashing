@@ -1,0 +1,19 @@
+package unitTests;
+
+import static org.junit.Assert.*;
+import hashTesting.*;
+import org.junit.Test;
+
+public class DictionaryTest {
+
+	@Test
+	public void testCtor() {
+		Dictionary testDict = new Dictionary(MainTest.makeQuickEpList(), WME.ATTR);
+		
+		WME w = new WME("(S1 ^alligator eats)");
+		System.out.print(testDict.getEntryAt(0).getWME().toString());
+		assertEquals(testDict.getEntryAt(0).getWME(), w);
+		
+	}
+
+}
