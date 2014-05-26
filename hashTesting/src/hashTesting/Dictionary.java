@@ -1,6 +1,7 @@
 package hashTesting;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * A collection of WMEs and how often each have appeared
@@ -87,9 +88,9 @@ public class Dictionary
 		}
 		
 		//resort
-		sortByOccurrence(0, dictionary.size());
+		//sortByOccurrence(0, dictionary.size());
 		
-		//Collections.sort(dictionary);
+		Collections.sort(dictionary);
 	}//addEpisode
 	
 	
@@ -142,7 +143,7 @@ public class Dictionary
 	}
 	
 	/**
-	 * getWordAt
+	 * getEntryAt
 	 * 
 	 * returns the nth most frequently occuring word
 	 * 
@@ -150,7 +151,7 @@ public class Dictionary
 	 * @return
 	 */
 	
-	public Entry getWordAt(int n)
+	public Entry getEntryAt(int n)
 	{
 		return dictionary.get(n);
 	}
