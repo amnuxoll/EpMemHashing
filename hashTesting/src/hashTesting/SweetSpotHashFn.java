@@ -1,7 +1,5 @@
 package hashTesting;
 
-import java.util.ArrayList;
-
 /**
  * A hash function that creates a dictionary of the WME's in all of the 
  * episodes and sorts them by number of occurrences to find the most descriptive
@@ -15,10 +13,7 @@ import java.util.ArrayList;
 public class SweetSpotHashFn extends HashFn{
 	
 	
-	private Dictionary dictionary;
-	private Entry[] hashFormula;
-	private ArrayList<WME[]> episodeList;
-	
+	private Dictionary dictionary;         //list of all WMEs and their frequencies
 	private int count;
 	
 	/**
@@ -28,9 +23,8 @@ public class SweetSpotHashFn extends HashFn{
 	public SweetSpotHashFn(int size)
 	{
 		super(size);
-		hashFormula = new Entry[size];
 		count = 0;
-		episodeList = new ArrayList<WME[]>();
+		dictionary = new Dictionary(WME.ATTR+WME.VAL);
 		
 	}//ctor
 	
@@ -45,7 +39,7 @@ public class SweetSpotHashFn extends HashFn{
 	public int[] hash(WME[] episode)
 	{
 		//compile dictionary
-		int episodeLoc = compileEpisodeList(episode);
+		dictionary.addEpisode(count, episode);
 		
 		//find the magic number  //TODO EXPAND probably will be its own function
 		int n = 0; 
@@ -53,10 +47,11 @@ public class SweetSpotHashFn extends HashFn{
 		
 		//create hashFormula and compile hashCode
 		int[] hashCode = new int[this.codeSize];
+		Entry entry = null;  //the current entry in the dictionary
 		for(int i = 0; i < super.codeSize; i++) {
 			if(i+n < dictionary.getSize()){
-				hashFormula[i] = dictionary.getEntryAt(i+n);
-				if(hashFormula[i].occursIn(episodeLoc)){
+				entry = dictionary.getEntryAt(i+n);
+				if(entry.occursIn(count)) {
 					hashCode[i] = 1;
 				}
 				else{
@@ -67,7 +62,9 @@ public class SweetSpotHashFn extends HashFn{
 				hashCode[i]=0;
 			}
 		}
-		
+
+		count++;
+
 		return hashCode;
 	}//hash
 	
@@ -82,45 +79,4 @@ public class SweetSpotHashFn extends HashFn{
 		return "Sweetspot Hash Function";
 	}//getName
 	
-	/**
-	 * findCopy
-	 * 
-	 * @param episode
-	 * @int returns -1 if its not a copy, otherwise returns the location of 
-	 * copy in episodeList 
-	 */
-	private int findCopy(WME[] episode)
-	{
-		return -1;//TODO
-	}
-	
-	/**
-	 * compileEpisodeList
-	 * 
-	 * compiles EpisodeList and the dictionary, can be done at init or on the go
-	 * 
-	 * @param WME[] episode
-	 * @return int location of episode
-	 */
-	private int compileEpisodeList(WME[] episode){
-		
-		//if not init, init dictionary
-		if(count == 0) {
-			dictionary = new Dictionary(episodeList, WME.ATTR+WME.VAL);
-		}
-		else{
-			//if its a copy return loc and stop there
-			int loc = findCopy(episode);
-			if(loc>0){
-				return loc;
-			}
-			//otherwise add to dictionary
-			dictionary.addEpisode(count, episode);
-		}
-		//if it gets this far then increment, add to epList and return loc of episode
-		episodeList.add(episode);
-		count++;
-		return count - 1;
-	}
-	
-}
+}//class SweetSpotHashFn
