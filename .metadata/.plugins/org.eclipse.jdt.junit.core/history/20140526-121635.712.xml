@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?><testrun name="WMETest" project="hashTesting" tests="5" started="5" failures="0" errors="0" ignored="0">
-  <testsuite name="unitTests.WMETest" time="0.0">
-    <testcase name="testIsNum" classname="unitTests.WMETest" time="0.0"/>
-    <testcase name="testIsID" classname="unitTests.WMETest" time="0.0"/>
-    <testcase name="testWMEConst" classname="unitTests.WMETest" time="0.0"/>
-    <testcase name="testWMEConst2" classname="unitTests.WMETest" time="0.0"/>
-    <testcase name="testEquals" classname="unitTests.WMETest" time="0.0"/>
-  </testsuite>
-</testrun>

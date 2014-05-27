@@ -2,6 +2,8 @@ package unitTests;
 
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -125,6 +127,33 @@ public class HashFnTest extends HashFn
         assertEquals(test[3], 1);
 
     }//testFoldingHashFn
+    
+    /**
+     * tests the hash() method in SweetSpotHashFn
+     */
+    @Test
+    public void testSweetSpotHashFn()
+    {
+    	SweetSpotHashFn fn = new SweetSpotHashFn(4);
+    	ArrayList<WME[]> testList = new ArrayList<WME[]>();
+		testList = MainTest.makeQuickEpList();
+		ArrayList<int[]> hashCodeList = new ArrayList<int[]>();
+		
+		for(int i = 0; i<testList.size(); i++){
+			hashCodeList.add(fn.hash(testList.get(i)));
+		}
+		
+		assertEquals(hashCodeList.get(0)[0], 1);
+		assertEquals(hashCodeList.get(0)[1], 1);
+		assertEquals(hashCodeList.get(0)[2], 0);
+		assertEquals(hashCodeList.get(0)[3], 0);
+		
+		assertEquals(hashCodeList.get(1)[0], 0);
+		assertEquals(hashCodeList.get(1)[1], 0);
+		assertEquals(hashCodeList.get(1)[2], 1);
+		assertEquals(hashCodeList.get(1)[3], 1);
+		
+    }//testSweetSpotHashFn
     
     /**
      * Tears down the test fixture.

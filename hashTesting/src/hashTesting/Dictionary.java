@@ -40,6 +40,11 @@ public class Dictionary
 		
 	}//ctor
 	
+	public int getSize(){
+		return dictionary.size();
+	}
+
+	
 	/**
 	 * findWordLoc
 	 * 

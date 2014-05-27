@@ -1,0 +1,126 @@
+package hashTesting;
+
+import java.util.ArrayList;
+
+/**
+ * A hash function that creates a dictionary of the WME's in all of the 
+ * episodes and sorts them by number of occurrences to find the most descriptive
+ * words for creating a hash function
+ * 
+ * @author Alexandra Warlen
+ * @author Allie Seibert
+ * @version Tuesday May 27, 2014
+ */
+
+public class SweetSpotHashFn extends HashFn{
+	
+	
+	private Dictionary dictionary;
+	private Entry[] hashFormula;
+	private ArrayList<WME[]> episodeList;
+	
+	private int count;
+	
+	/**
+	 * ctor initializes as per the super and creates a dictionary
+	 * @param size
+	 */
+	public SweetSpotHashFn(int size)
+	{
+		super(size);
+		hashFormula = new WME[size];
+		count = 0;
+		episodeList = new ArrayList<WME[]>();
+		
+	}//ctor
+	
+	
+	/**
+	 * hash
+	 * 
+	 * compiles a dictionary, determines the number of words (n) it should not use
+	 * creates a hash formula based off the words below the top n
+	 * 
+	 */
+	public int[] hash(WME[] episode)
+	{
+		//compile dictionary
+		int episodeLoc = compileEpisodeList(episode);
+		
+		//find the magic number  //TODO EXPAND probably will be its own function
+		int n = 0; 
+		
+		
+		//create hashFormula and compile hashCode
+		int[] hashCode = int[this.codeSize];
+		for(int i = 0; i < super.codeSize; i++) {
+			if(i+n < dictionary.getSize()){
+				hashFormula[i] = dictionary.getEntryAt(i+n);
+				if(dictionary.getEntryAt(i+n).occursIn(episodeLoc)){
+					hashCode[i] = 1;
+				}
+				else{
+					hashCode[i] = 0;
+				}
+			}
+			else{
+				hashCode[i]=0;
+			}
+		}
+		
+		return hashCode;
+	}//hash
+	
+	
+	/**
+	 * getName
+	 * 
+	 * gives a name for printing
+	 */
+	public String getName()
+	{
+		return "Sweetspot Hash Function";
+	}//getName
+	
+	/**
+	 * findCopy
+	 * 
+	 * @param episode
+	 * @int returns -1 if its not a copy, otherwise returns the location of 
+	 * copy in episodeList 
+	 */
+	private int findCopy(WME[] episode)
+	{
+		return -1;//TODO
+	}
+	
+	/**
+	 * compileEpisodeList
+	 * 
+	 * compiles EpisodeList and the dictionary, can be done at init or on the go
+	 * 
+	 * @param WME[] episode
+	 * @return int location of episode
+	 */
+	private int compileEpisodeList(WME[] episode){
+		
+		//if not init, init dictionary
+		if(count == 0) {
+			dictionary = new Dictionary(episodeList, WME.ATTR+WME.VAL);
+		}
+		else{
+			//if its a copy return loc and stop there
+			int loc = findCopy(episode);
+			if(loc>0){
+				return loc;
+			}
+			//otherwise add to dictionary
+			dictionary.addEpisode(count, episode);
+		}
+		//if it gets this far then increment, add to epList and return loc of episode
+		episodeList.add(episode);
+		count++;
+		return count - 1;
+	}
+	
+}

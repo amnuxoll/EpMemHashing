@@ -1,0 +1,100 @@
+package hashTesting;
+
+import java.util.ArrayList;
+
+/**
+ * A hash function that creates a dictionary of the WME's in all of the 
+ * episodes and sorts them by number of occurrences to find the most descriptive
+ * words for creating a hash function
+ * 
+ * @author Alexandra Warlen
+ * @author Allie Seibert
+ * @version Tuesday May 27, 2014
+ */
+
+public class SweetSpotHashFn extends HashFn{
+	
+	
+	private Dictionary dictionary;
+	private WME[] hashFormula;
+	private ArrayList<WME[]> episodeList;
+	
+	private int count;
+	
+	/**
+	 * ctor initializes as per the super and creates a dictionary
+	 * @param size
+	 */
+	public SweetSpotHashFn(int size)
+	{
+		super(size);
+		hashFormula = new WME[size];
+		count = 0;
+		episodeList = new ArrayList<WME[]>();
+		
+	}//ctor
+	
+	
+	/**
+	 * hash
+	 * 
+	 * compiles a dictionary, determines the number of words (n) it should not use
+	 * creates a hash formula based off the words below the top n
+	 * 
+	 */
+	public int[] hash(WME[] episode)
+	{
+		episodeList.add(episode);
+		//compile dictionary
+		if(count == 0) {
+			
+			dictionary = new Dictionary(episodeList, WME.ATTR+WME.VAL);
+		}
+		else if (notACopy(episode)){
+			dictionary.addEpisode(count, episode);
+		}
+		
+		//find the magic number  //TODO EXPAND
+		int n = 0; 
+		
+		
+		//create hashFormula
+		for(int i = 0; i < super.codeSize; i++) {
+			hashFormula[i] = dictionary.getEntryAt(i+n).getEntry();
+		}
+		
+		//return hashCode
+		for(WME entry: hashFormula)
+		{
+			
+		}
+
+		count++;
+		return null;
+	}//hash
+	
+	
+	/**
+	 * getName
+	 * 
+	 * gives a name for printing
+	 */
+	public String getName()
+	{
+		return "Sweetspot Hash Function";
+	}//getName
+	
+	/**
+	 * notACopy
+	 * 
+	 * returns true if the episode is NOT in episode list
+	 * 
+	 * @param episode
+	 * @return
+	 */
+	private boolean notACopy(WME[] episode)
+	{
+		return true;//TODO
+	}
+	
+}

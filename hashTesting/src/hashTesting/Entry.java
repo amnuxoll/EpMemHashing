@@ -112,13 +112,24 @@ public class Entry implements Comparable<Entry> {
 
 	/** compares two entries based upon their total number of occurences */ 
 	@Override
-	public int compareTo(Entry otherEntry) {
+	public int compareTo(Entry otherEntry)
+	{
 		int myOccur = getSumOccurrences();
 		int otherOccur = otherEntry.getSumOccurrences();
 		
 		return otherOccur - myOccur;
 	}
 	
+	//TODO header
+	public boolean occursIn (int episodeIndex)
+	{
+		for (int[] digit: occurrences){
+			if(digit[0] == episodeIndex){
+				return true;
+			}
+		}
+		return false;
+	}
 	
 	
 	

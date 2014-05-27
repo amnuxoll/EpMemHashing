@@ -1,0 +1,17 @@
+package hashTesting;
+
+public class SweetSpotHashFn extends HashFn{
+	public SweetSpotHashFn(int size)
+	{
+		super(size);
+	}
+	public int[] hash(WME[] episode)
+	{
+		return null;
+	}
+	public String getName()
+	{
+		return "Sweetspot Hash Function";
+	}
+	
+}
