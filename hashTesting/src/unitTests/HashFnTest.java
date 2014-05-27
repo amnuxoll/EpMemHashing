@@ -14,7 +14,7 @@ import hashTesting.*;
  * @author  Alexandra Warlen
  * @version Wednesday May 14, 2014
  */
-public class HashFnTest extends RandomHashFn
+public class HashFnTest extends HashFn
 {
     /**
      * Default constructor for test class HashTest
@@ -50,14 +50,18 @@ public class HashFnTest extends RandomHashFn
         episode[1] = test2WME;
         
         // check to make sure each index in array of 32 bits has been initialized to 0.
-        int[] test = hash(episode);
+        RandomHashFn fn = new RandomHashFn(HashFn.CODE_SIZE);
+        int[] test = fn.hash(episode);
+
         assertTrue(test[0] == 0 || test[0] == 1);
         assertTrue(test[super.codeSize-1] == 0 || test[super.codeSize-1] == 1);
     }
     
+    
     @Test
     public void testDummyHashFn()
     {
+    	
         // create test episode
         WME testWME = new WME();
         WME test2WME = new WME();
@@ -66,10 +70,13 @@ public class HashFnTest extends RandomHashFn
         episode[1] = test2WME;
         
         // check to make sure each index in array of 32 bits has been initialized to 0.
-        int[] test = hash(episode);
+        DummyHashFn fn = new DummyHashFn(HashFn.CODE_SIZE);
+        int[] test = fn.hash(episode);
+
         assertEquals(test[0], 0);
         assertEquals(test[super.codeSize-1], 0);
     }
+    
     
     /**
      * tests the hash() method in FoldingHashFn
@@ -128,6 +135,18 @@ public class HashFnTest extends RandomHashFn
     public void tearDown()
     {
     }
+
+	@Override
+	public int[] hash(WME[] episode) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
     
 }
 
