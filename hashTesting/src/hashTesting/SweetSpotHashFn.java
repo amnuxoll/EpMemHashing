@@ -15,20 +15,33 @@ public class SweetSpotHashFn extends HashFn{
 	
 	private Dictionary dictionary;         //list of all WMEs and their frequencies
 	private int count;
+	private double discardFraction = 0.0;
 	
 	/**
-	 * ctor initializes as per the super and creates a dictionary
+	 * ctor initializes as per the super and creates a dictionary, discardFrac implied at 0.0
 	 * @param size
 	 */
 	public SweetSpotHashFn(int size)
 	{
 		super(size);
-		count = 0;
-		dictionary = new Dictionary(WME.ATTR+WME.VAL);
-		
+		this.count = 0;
+		this.dictionary = new Dictionary(WME.ATTR+WME.VAL);
 	}//ctor
 	
-	
+	/**
+	 * ctor initializes as per the super and creates a dictionary
+	 * @param size
+	 * @param discardFraction
+	 */
+	public SweetSpotHashFn(int size, double discardFraction)
+	{
+		super(size);
+		this.count = 0;
+		this.dictionary = new Dictionary(WME.ATTR+WME.VAL);
+		if(discardFraction <= 1.0 && discardFraction >=0.0)
+			this.discardFraction = discardFraction;
+	}//ctor
+
 	/**
 	 * hash
 	 * 
@@ -41,10 +54,9 @@ public class SweetSpotHashFn extends HashFn{
 		//compile dictionary
 		dictionary.addEpisode(count, episode);
 		
-		//find the magic number  //TODO EXPAND probably will be its own function
-		int n = 0; 
-		
-		
+		//find the magic number 
+		int n = (int) discardFraction *dictionary.getSize(); 
+			
 		//create hashFormula and compile hashCode
 		int[] hashCode = new int[this.codeSize];
 		Entry entry = null;  //the current entry in the dictionary
@@ -76,7 +88,7 @@ public class SweetSpotHashFn extends HashFn{
 	 */
 	public String getName()
 	{
-		return "Sweetspot Hash Function";
+		return "Sweetspot Hash Function -discard fraction: " + discardFraction;
 	}//getName
 	
 }//class SweetSpotHashFn
