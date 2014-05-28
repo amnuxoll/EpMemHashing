@@ -33,6 +33,7 @@ public class Main
         hashFunctions.add(new RandomHashFn(HashFn.CODE_SIZE)); 
         hashFunctions.add(new DummyHashFn(HashFn.CODE_SIZE));
         hashFunctions.add(new FoldingHashFn(HashFn.CODE_SIZE));
+        hashFunctions.add(new SweetSpotHashFn(HashFn.CODE_SIZE, .2));
     }//ctor
 
     /**
