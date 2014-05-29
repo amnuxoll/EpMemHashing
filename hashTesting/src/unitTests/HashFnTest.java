@@ -155,10 +155,10 @@ public class HashFnTest extends HashFn
 		
 		//Now re-add the second episode.  It's WMEs should "bubble" to the top
 		hashCodeList.add(fn.hash(testList.get(1)));
-		assertEquals(hashCodeList.get(2)[0], 1);
-		assertEquals(hashCodeList.get(2)[1], 1);
-		assertEquals(hashCodeList.get(2)[2], 0);
-		assertEquals(hashCodeList.get(2)[3], 0);
+		assertEquals(hashCodeList.get(2)[0], 0);
+		assertEquals(hashCodeList.get(2)[1], 0);
+		assertEquals(hashCodeList.get(2)[2], 1);
+		assertEquals(hashCodeList.get(2)[3], 1);
 		
     }//testSweetSpotHashFn
     
