@@ -95,6 +95,11 @@ public class MainTest extends Main
         assertEquals(wme.id, "E2");
         assertEquals(wme.attribute, "x");
         assertEquals(wme.value, "10");
+        
+        //Try a delta-based file
+        loadEpisodes("log_eaters_changesonly2.txt");
+        assertEquals(episodeList.size(), 580);  //should have 580 episodes in it
+        
     }//testLoadEpisodes
 
     /**

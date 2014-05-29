@@ -19,7 +19,7 @@ public class Main
     // instance variables
     protected ArrayList<WME[]> episodeList;
     protected ArrayList<int[]> hashCodeList;
-    protected ArrayList<HashFn> hashFunctions; //TODO What??
+    protected ArrayList<HashFn> hashFunctions; //the list of hash fns to test
     protected Random rand = new Random();
 
     /**
@@ -48,9 +48,18 @@ public class Main
     /**
      * loadEpisodes
      *
-     * loads all the episodes in a given file and puts them in episodeList.
-     * Each line of the file should have one WME on it and episodes are
-     * separated by blank lines
+     * loads all the episodes in a given file and puts them in episodeList.  
+     * This file can be in one of two formats:
+     * 1.  (instance-based) Each line of the file should have one WME on it 
+     *     and episodes are separated by blank lines or a line containing 
+     *     "--- input phase ---"
+     * 2.  (delta-based) the first episode is the same as for an instance-based 
+     *     file.  Subsequent episodes are defined by specifying which WMEs to 
+     *     add and remove from the previous episode in this format:  
+     *        =>WM: (#: E6 ^content wall)
+	 *        <=WM: (#: E6 ^content normalfood)
+	 *     where '#' can be any positive integer.  Each add/remove must be 
+	 *     on a separate line. 
      */
     protected void loadEpisodes(String filename)
     {
@@ -73,16 +82,51 @@ public class Main
         episodeList.clear();
         
         //Read each episode from the file
+        ArrayList<WME> ep = new ArrayList<WME>();
         while(scan.hasNextLine())
         {
-            ArrayList<WME> ep = new ArrayList<WME>();
+            int count = 0; //number of WMEs read so far for this episode
             String line = scan.nextLine();
             line = line.trim();
-            while(line.length() > 0)
+            while( (line.length() > 0) && (line.indexOf("--- input phase ---") == -1) )
             {
-                //create and add a WME with this line
+                boolean add = true;  //are we adding or removing this WME?
+                
+                //Check for WME add/remove
+                if (line.indexOf("WM: ") != -1)
+                {
+                    //are we removing this WME instead of adding it?
+                    if (line.indexOf("<=") == 0)
+                    {
+                        add = false;
+                    }
+
+                    //Trim off the non-WME part
+                    int index = line.lastIndexOf(": ");
+                    line = "(" + line.substring(index + 2);
+                }
+                else if (count == 0)
+                {
+                    //if we aren't seeing add/remove then this is a full episode
+                    //specification and we want to start with an empty list
+                    ep = new ArrayList<WME>();
+                }
+                
+                //create and add/remove a WME with this line
                 WME wme = new WME(line);
-                ep.add(wme);
+                if (!wme.isValid())
+                {
+                	break;
+                }
+                if (add)
+                {
+                    ep.add(wme);
+                }
+                else
+                {
+                    ep.remove(wme);
+                }
+                count++;
 
                 //read the next line
                 if (! scan.hasNextLine())
@@ -97,6 +141,7 @@ public class Main
             //ArrayList into an array and add it to the list
             WME[] finalEp = ep.toArray(new WME[ep.size()]);
             this.episodeList.add(finalEp);
+
         }//while
 
         //ok we're done
@@ -214,7 +259,7 @@ public class Main
         Main myself = new Main();
         
         //Step 1:  load the data from the file specified in input[0]
-        myself.loadEpisodes("data.txt");
+        myself.loadEpisodes("log_eaters_changesonly2.txt");
         
         //Step 2:  Test it and print the result
         System.out.println("Name\tUnique\tRecur");
