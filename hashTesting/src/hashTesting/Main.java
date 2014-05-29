@@ -30,10 +30,14 @@ public class Main
         episodeList = new ArrayList<WME[]>();
         hashCodeList = new ArrayList<int[]>();
         hashFunctions = new ArrayList<HashFn>();
-        hashFunctions.add(new RandomHashFn(HashFn.CODE_SIZE)); 
-        hashFunctions.add(new DummyHashFn(HashFn.CODE_SIZE));
-        hashFunctions.add(new FoldingHashFn(HashFn.CODE_SIZE));
-        hashFunctions.add(new SweetSpotHashFn(HashFn.CODE_SIZE, .2));
+        //hashFunctions.add(new RandomHashFn(HashFn.CODE_SIZE)); 
+        //hashFunctions.add(new DummyHashFn(HashFn.CODE_SIZE));
+        //hashFunctions.add(new FoldingHashFn(HashFn.CODE_SIZE));
+        for(int codeSize = 122; codeSize<= 126; codeSize+= 2){
+        	for(double discardFraction = 0.0; discardFraction<.2; discardFraction+=.002){
+        		hashFunctions.add(new SweetSpotHashFn(codeSize,discardFraction));
+        	}
+        }
     }//ctor
 
     /**
@@ -149,7 +153,7 @@ public class Main
      */
     public double[] calculateSuccess(HashFn fn)
     {
-        int currEp = 0;  //index of current episiode in the episodeList
+        int currEp = 1;  //index of current episiode in the episodeList
         int testEp;
         
         int[] hashVal = new int[fn.codeSize];
@@ -159,6 +163,7 @@ public class Main
         double recurSuccesses = 0;
         double uniqueSuccesses = 0;
 
+        hashCodeList.add(fn.hash(episodeList.get(0)));
         
         while(currEp < episodeList.size())
         {
@@ -176,11 +181,14 @@ public class Main
 
         	//use the hashfunciton to create a hashcode for the given episode
         	hashVal = fn.hash(episodeList.get(testEp));
-                    	
+        	//System.out.print("\n");//TODO debug
+            //for(int i: hashVal)  {System.out.print(i);}//TODO debug
+            //if(testPrevious)      {System.out.print("recur ");}//TODO debug
         	//test the selected episode and record the result
         	if(!testPrevious){
         		if(findHash(hashVal) < 0){
         			uniqueSuccesses++;
+        			//System.out.print("success");//TODO debug
         		}
                 
         		//Add the hashcode to the list
@@ -189,8 +197,9 @@ public class Main
                 //Advance to next episode
         		currEp++;
         	}//if
-        	else if(findHash(hashVal) == testEp) {
+        	else if(findHash(hashVal) > 0) {
         		recurSuccesses++;
+        		//System.out.print("success");//TODO debug
         	}
         	
         }//while
@@ -199,7 +208,6 @@ public class Main
         double[] result = new double[2];
         result[0] = uniqueSuccesses / uniqueTests;
         result[1] = recurSuccesses / recurTests;
-        
         return result;
         
     }//calculateSuccess
@@ -219,7 +227,13 @@ public class Main
         //Step 2:  Test it and print the result
         System.out.println("Name\tUnique\tRecur");
         System.out.println("----\t------\t-----");
+        
+        int bookmark= 0;
         for(HashFn fn : myself.hashFunctions) {
+        	if (bookmark != fn.codeSize){
+            	System.out.println("\n\n\n\n\nCode Size: " + fn.codeSize + "\n");
+            	bookmark = fn.codeSize;
+        	}
             double[] results = myself.calculateSuccess(fn);
         	System.out.println(fn.getName() + "\t" + results[0] + "\t" + results[1]);
         }

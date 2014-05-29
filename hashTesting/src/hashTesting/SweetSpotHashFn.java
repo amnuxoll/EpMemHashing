@@ -1,5 +1,7 @@
 package hashTesting;
 
+import java.text.DecimalFormat;
+
 /**
  * A hash function that creates a dictionary of the WME's in all of the 
  * episodes and sorts them by number of occurrences to find the most descriptive
@@ -88,7 +90,7 @@ public class SweetSpotHashFn extends HashFn{
 	 */
 	public String getName()
 	{
-		return "Sweetspot Hash Function -discard fraction: " + discardFraction;
+		return "" + discardFraction;
 	}//getName
 	
 }//class SweetSpotHashFn
