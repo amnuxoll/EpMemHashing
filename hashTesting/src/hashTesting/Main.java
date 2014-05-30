@@ -154,15 +154,13 @@ public class Main
      */
     public void addHashFunctions(int codeSize)
     {
-    	//These aren't really needed anymore
-//        hashFunctions.add(new RandomHashFn(HashFn.CODE_SIZE)); 
-//        hashFunctions.add(new DummyHashFn(HashFn.CODE_SIZE));
     	
         hashFunctions.add(new FoldingHashFn(codeSize));
-        for(double discardFraction = 0.0; discardFraction<1.0; discardFraction+=.05){	
+        for(double discardFraction = 0.0; discardFraction<=0.1; discardFraction+=.05){	
         		hashFunctions.add(new SweetSpotHashFn(codeSize,discardFraction));
         }
         hashFunctions.add(new GAHashFn(codeSize, this.episodeList, WME.ATTR + WME.VAL));
+        hashFunctions.add(new LSHashFn(codeSize, 5));
             	
     }//addHashFunctions
     
@@ -377,8 +375,6 @@ public class Main
         return result;
         
     }//calculateSuccess
-
-    
     
     /**
      * Constructor for objects of class Main
@@ -391,8 +387,8 @@ public class Main
         myself.loadEpisodes("data.txt");
         
         //Step 2:  Iterate over a range of hash code sizes
-        for(int codeSize = 5; codeSize<= 125; codeSize+= 10){ 
-        	System.out.println("testing hash functions for hash code size: " + codeSize);
+        for(int codeSize = 10; codeSize<= 130; codeSize+= 10){ 
+        	System.out.println("\ntesting hash functions for hash code size: " + codeSize);
         	myself.hashFunctions = new ArrayList<HashFn>();
         	myself.addHashFunctions(codeSize);
 

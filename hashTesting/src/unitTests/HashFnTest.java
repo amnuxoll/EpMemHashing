@@ -189,6 +189,49 @@ public class HashFnTest extends HashFn
     }//testGAHashFn
     
     /**
+     * tests the hash() method in LSHashFn.   
+     */
+    @Test
+    public void testLSHashFn()
+    {
+        // create first episode
+        WME[] ep = new WME[3];
+        ep[0] = new WME("(S1 ^foo 1)");  //index 0
+        ep[1] = new WME("(S1 ^bar 2)");  //index 1
+        ep[2] = new WME("(S1 ^baz 3)");  //index 2
+
+        //Test first episode
+        LSHashFn fn = new LSHashFn();
+        int[] test = fn.hash(ep);
+        String hashStr = "" + test[0] + test[1] + test[2] + test[3];
+        assertEquals(hashStr, "1111");
+
+        // create second episode
+        ep = new WME[3];
+        ep[0] = new WME("(S1 ^foo 44)");  //index 3
+        ep[1] = new WME("(S1 ^bar 2)");   //index 1
+        ep[2] = new WME("(S1 ^baz 3)");   //index 2
+
+        //Test second episode
+        test = fn.hash(ep);
+        hashStr = "" + test[0] + test[1] + test[2] + test[3];
+        assertEquals(hashStr, "1000");
+
+        // create third episode
+        ep = new WME[3];
+        ep[0] = new WME("(S1 ^foo 44)"); //index 3
+        ep[1] = new WME("(S1 ^bar 2)");  //index 1
+        ep[2] = new WME("(S1 ^baz 55)"); //index 0 (reused)
+
+        //Test second episode
+        test = fn.hash(ep);
+        hashStr = "" + test[0] + test[1] + test[2] + test[3];
+        assertEquals(hashStr, "1000");
+
+    }//testLSHashFn
+    
+    
+    /**
      * Tears down the test fixture.
      *
      * Called after every test case method.
