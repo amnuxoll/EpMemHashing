@@ -33,12 +33,11 @@ public class Main
         //hashFunctions.add(new RandomHashFn(HashFn.CODE_SIZE)); 
         //hashFunctions.add(new DummyHashFn(HashFn.CODE_SIZE));
         
-        for(int codeSize = 65; codeSize<= 200; codeSize+= 5){
-        	hashFunctions.add(new FoldingHashFn(codeSize));
-        	//for(double discardFraction = 0.0; discardFraction<1.0; discardFraction+=.01){
-        		
-        		//hashFunctions.add(new SweetSpotHashFn(codeSize,discardFraction));
-        	//}
+        for(int codeSize = 50; codeSize<= 200; codeSize+= 50){
+        	//hashFunctions.add(new FoldingHashFn(codeSize));
+        	for(double discardFraction = 0.0; discardFraction<1.0; discardFraction+=.05){	
+        		hashFunctions.add(new SweetSpotHashFn(codeSize,discardFraction));
+        	}
         }
     }//ctor
 
@@ -278,11 +277,11 @@ public class Main
         int bookmark= 0;
         for(HashFn fn : myself.hashFunctions) {
         	if (bookmark != fn.codeSize){
-            	System.out.print(fn.codeSize);
+            	System.out.print("\n\nCode Size: " + fn.codeSize + "\n\n\n\n\n");
             	bookmark = fn.codeSize;
         	}
             double[] results = myself.calculateSuccess(fn);
-        	System.out.println("\t" + results[0] + "\t" + results[1]);
+        	System.out.println(fn.getName() + "\t" + results[0] + "\t" + results[1]);
         }
     }//main
 
