@@ -2,6 +2,7 @@ package hashTesting;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Random;
 
 /**
  * A collection of WMEs and how often each have appeared
@@ -20,6 +21,9 @@ public class Dictionary
 	 * respective occurrences
 	 */
 	private ArrayList<Entry> dictionary;
+	
+	//because random
+	Random rand = new Random();
 	
 	/**
 	 * This ctor is designed to be used by hash functions
@@ -120,6 +124,18 @@ public class Dictionary
 	{
 		return dictionary.get(n);
 	}
+	
+	/**
+	 * getRandomEntry
+	 * 
+	 * @return a randomly selected entry 
+	 */
+	
+	public Entry getRandomEntry()
+	{
+		int index = rand.nextInt(this.getSize());
+		return dictionary.get(index);
+	}	
 	
 }
 	

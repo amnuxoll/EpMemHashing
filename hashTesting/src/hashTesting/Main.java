@@ -33,13 +33,14 @@ public class Main
         //hashFunctions.add(new RandomHashFn(HashFn.CODE_SIZE)); 
         //hashFunctions.add(new DummyHashFn(HashFn.CODE_SIZE));
         
-        for(int codeSize = 65; codeSize<= 200; codeSize+= 5){
-        	hashFunctions.add(new FoldingHashFn(codeSize));
-        	//for(double discardFraction = 0.0; discardFraction<1.0; discardFraction+=.01){
-        		
-        		//hashFunctions.add(new SweetSpotHashFn(codeSize,discardFraction));
-        	//}
-        }
+//        for(int codeSize = 65; codeSize<= 200; codeSize+= 5){
+//        	hashFunctions.add(new FoldingHashFn(codeSize));
+//        	//for(double discardFraction = 0.0; discardFraction<1.0; discardFraction+=.01){
+//        		
+//        		//hashFunctions.add(new SweetSpotHashFn(codeSize,discardFraction));
+//        	//}
+//        }
+        
     }//ctor
 
     /**
@@ -231,6 +232,7 @@ public class Main
 
     }//genOneEpisode
 	
+    
     /**
      * genEpisodes
      * 
@@ -259,6 +261,7 @@ public class Main
     		sum += entry.getOccurrences().size();
     	}
 
+
     	//generate the episodes
     	for(int i = 0; i < howMany; ++i)
     	{
@@ -267,7 +270,6 @@ public class Main
     	}
     	
     }//genEpisodes
-
 
 	/**
      * findHash
@@ -383,6 +385,10 @@ public class Main
         
         //Step 1:  load the data from the file specified in input[0]
         myself.loadEpisodes("data.txt");
+        
+        //Step 1.5:  If using the GAHashFn it has to be added now because it takes
+        //the episodeList as an argument.
+        myself.hashFunctions.add(new GAHashFn(HashFn.CODE_SIZE, myself.episodeList, WME.ATTR + WME.VAL));
         
         //Step 2:  Test it and print the result
         System.out.println("Name\tUnique\tRecur");

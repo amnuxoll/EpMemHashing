@@ -110,7 +110,7 @@ public class Entry implements Comparable<Entry> {
 		return sum;
 	}
 
-	/** compares two entries based upon their total number of occurences */ 
+	/** compares two entries based upon their total number of occurrences */ 
 	@Override
 	public int compareTo(Entry otherEntry)
 	{

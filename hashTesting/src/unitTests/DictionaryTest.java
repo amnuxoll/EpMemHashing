@@ -15,9 +15,9 @@ public class DictionaryTest {
 	public DictionaryTest()
 	{
 		// a dictionary consisting of comparisons of the wme based only on attribute
-		testDictAttr = new Dictionary(MainTest.makeQuickEpList(), WME.ATTR);
+		testDictAttr = new Dictionary(MainTest.makeQuickEpList2(), WME.ATTR);
 		// a dictionary consisting of comparisons of the wme based on attribute AND value
-		testDictAttrVal = new Dictionary(MainTest.makeQuickEpList(), WME.ATTR+ WME.VAL);
+		testDictAttrVal = new Dictionary(MainTest.makeQuickEpList2(), WME.ATTR+ WME.VAL);
 	}
 	
 	@Test

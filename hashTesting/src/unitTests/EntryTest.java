@@ -20,7 +20,7 @@ public class EntryTest extends MainTest {
     {
     	// Create a test episodeList and check the value of the first WME
     	// in the first episode.
-    	ArrayList<WME[]> testList = makeQuickEpList();
+    	ArrayList<WME[]> testList = makeQuickEpList2();
     	assertEquals(testList.get(0)[0].value, "red");
     	
     	// create a test Entry from the 2nd WME in the first episode
@@ -39,7 +39,7 @@ public class EntryTest extends MainTest {
     @Test
     public void testAddOccur()
     {
-    	ArrayList<WME[]> testList = makeQuickEpList();
+    	ArrayList<WME[]> testList = makeQuickEpList2();
     	Entry testEntry = new Entry(3, testList.get(0)[1]);
     	
     	// Add some occurrences
@@ -75,7 +75,7 @@ public class EntryTest extends MainTest {
     @Test
     public void testGetSumOccur()
     {
-    	ArrayList<WME[]> testList = makeQuickEpList();
+    	ArrayList<WME[]> testList = makeQuickEpList2();
     	Entry testEntry = new Entry(3, testList.get(0)[1]);
     	
     	// Add some occurrences
@@ -104,7 +104,7 @@ public class EntryTest extends MainTest {
     @Test
     public void testCompareTo()
     {
-    	ArrayList<WME[]> testList = makeQuickEpList();
+    	ArrayList<WME[]> testList = makeQuickEpList2();
     	// make 2 entries
     	Entry entry1 = new Entry(3, testList.get(0)[1]);
     	Entry entry2 = new Entry(3, testList.get(0)[1]);
@@ -118,13 +118,13 @@ public class EntryTest extends MainTest {
     	
     	
     	// they are equal if they have the same number of total occurrences
-    	assertEquals(entry1.compareTo(entry2), -1);
+    	assertEquals(entry1.compareTo(entry2), -2);
     	
     	// make them equal and try again
     	entry2.addOccurrence(8);
     	
-    	assertEquals(entry1.compareTo(entry2), 0);
-    	assertEquals(entry2.compareTo(entry1), 0);
+    	assertEquals(entry1.compareTo(entry2), -1);
+    	assertEquals(entry2.compareTo(entry1), 1);
     }
 }
 
