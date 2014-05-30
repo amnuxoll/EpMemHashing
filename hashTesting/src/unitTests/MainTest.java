@@ -101,6 +101,26 @@ public class MainTest extends Main
         assertEquals(episodeList.size(), 580);  //should have 580 episodes in it
         
     }//testLoadEpisodes
+    
+    /**
+     * testGenEpisodes
+     * 
+     */
+    @Test
+    public void testGenEpisodes()
+    {
+    	//Generate 40 more episodes
+    	loadEpisodes("data.txt");
+    	int numEpsBefore = episodeList.size();
+    	genEpisodes(40);
+    	assertEquals(numEpsBefore + 40, episodeList.size());
+    	
+    	//Verify that there is some real data in there
+    	WME[] ep = episodeList.get(numEpsBefore + 1);
+    	WME w = ep[ep.length / 2];
+    	assertEquals(w.isValid(), true);
+    	
+    }//testGenEpisodes
 
     /**
      * testFindHash

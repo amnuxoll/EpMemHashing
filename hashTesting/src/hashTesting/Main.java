@@ -49,6 +49,7 @@ public class Main
         this();
         rand = new Random(seed);
     }
+    
 
     /**
      * loadEpisodes
@@ -156,6 +157,118 @@ public class Main
     }//loadEpisodes
     
     /**
+     * genOneEpisode
+     * 
+     * creates a single, randomly generated episode
+     * 
+     * @param dict a dictionary of WMEs that may be in the episode
+     * @param sum a count of all the times a WME appears in any episode
+     * 
+     * @return a newly minted episode that's pretty similar to the last 
+     * one in episodeList
+     */
+    private WME[] genOneEpisode(Dictionary dict, int sum) {
+    	//determine how many of the previous episodes will be added and 
+    	//removed.  The values have a 50% chance of being zero, and 
+    	//a maximum that is about 5% of the size of the previous episode
+    	WME[] lastEp = this.episodeList.get(this.episodeList.size() - 1);
+    	int maxChange = Math.max(1, lastEp.length / 20);  
+    	int removeAmt = Math.max(0, rand.nextInt(maxChange * 2) - maxChange); 
+    	int addAmt = removeAmt;
+    	while(addAmt == removeAmt) {
+    		addAmt = Math.max(0, rand.nextInt(maxChange * 2) - maxChange);
+    	}
+    	
+    	//Randomly determine the indexes of the ones to remove
+    	int[] removeIndexes = {-1};  //default value has no valid indexes
+    	if (removeAmt > 0) {
+    		removeIndexes = new int[removeAmt];
+    		for(int i = 0; i < removeAmt; ++i) {
+    			removeIndexes[i] = rand.nextInt(lastEp.length);
+    		}
+    		Arrays.sort(removeIndexes);
+    	}
+    	
+    	//Create the new episode by coping the previous one without the removed WMEs
+    	WME[] newEp = new WME[lastEp.length - removeAmt + addAmt];
+    	int currPos = 0;
+    	for(int i = 0; i < lastEp.length; ++i) {
+    		//is this a remove index?
+    		for(int j = 0; j < removeAmt; ++j) {
+    			if (removeIndexes[j] == i) {
+    				continue;
+    			}
+    		}
+    		
+    		//copy the WME
+    		newEp[currPos] = new WME(lastEp[i].toString());
+    		currPos++;
+    		if (currPos == newEp.length) break;
+    	}//for
+    			
+    	//Now add any additional WMEs needed to fill out the new episode
+    	while(currPos < newEp.length) {
+    		int index = rand.nextInt(sum);  //randomly select a WME
+    		int count = 0;
+    		//find the randomly selected WME
+    		for(int i = 0; i < dict.getSize(); ++i) {
+    			Entry entry = dict.getEntryAt(i);
+    			count += entry.getSumOccurrences();
+    			
+    			//Have we found it?
+    			if (count > index)
+    			{
+    				WME newWME = new WME(entry.getEntry().toString());
+    				newEp[currPos] = newWME;
+    				currPos++;
+    				break;
+    			}
+    		}//for
+    	}//while
+    	
+    	return newEp;
+
+    }//genOneEpisode
+	
+    /**
+     * genEpisodes
+     * 
+     * generates more episodes for the episodeList based upon the ones that are 
+     * already there.  This method does these things to try to make its episodes
+     * "realistic":
+     *  - it honors existing WME frequencies in its selection.  So more frequently
+     *    occuring WMEs are more likely to appear in the generated episodes 
+     *  - each episode is only a little different than its predecessor
+     *  - episodes are around the same size
+     *  
+     *  NOTE:  if there are no reference episodes this method quietly fails
+     *  
+     *  @param howMany  how many new episodes to add
+     */
+    public void genEpisodes(int howMany)
+    {
+    	//To track frequencies, build up a dictionary of WMEs
+    	Dictionary dict = new Dictionary(this.episodeList, WME.ID + WME.ATTR + WME.VAL);
+    	
+    	//count how many total WMEs are in all episodes
+    	int sum = 0;
+    	for(int i = 0; i < dict.getSize(); ++i)
+    	{
+    		Entry entry = dict.getEntryAt(i);
+    		sum += entry.getOccurrences().size();
+    	}
+
+    	//generate the episodes
+    	for(int i = 0; i < howMany; ++i)
+    	{
+    		WME[] ep = genOneEpisode(dict, sum);
+    		this.episodeList.add(ep);
+    	}
+    	
+    }//genEpisodes
+
+
+	/**
      * findHash
      * 
      * checks hashlist to see if the episode has already been seen.
@@ -268,7 +381,7 @@ public class Main
         Main myself = new Main();
         
         //Step 1:  load the data from the file specified in input[0]
-        myself.loadEpisodes("log_eaters_changesonly2.txt");
+        myself.loadEpisodes("data.txt");
         
         //Step 2:  Test it and print the result
         System.out.println("Name\tUnique\tRecur");
