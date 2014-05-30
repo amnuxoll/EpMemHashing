@@ -17,6 +17,7 @@ public abstract class HashFn
     //The number of bits in the hash code
     protected int codeSize = CODE_SIZE;
 
+
     /** ctor
      *
      * @param size the required hash code size
@@ -24,6 +25,7 @@ public abstract class HashFn
     public HashFn(int size)
     {
         this.codeSize = size;
+        
     }
     
     /**

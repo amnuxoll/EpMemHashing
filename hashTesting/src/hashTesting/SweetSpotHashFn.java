@@ -19,8 +19,10 @@ public class SweetSpotHashFn extends HashFn{
 	private int count;
 	private double discardFraction = 0.0;
 	private Entry[] hashFormula;
-	private int compareType = WME.ATTR+WME.VAL;
+	private int compareType = WME.ATTR;
 	private int n;
+	
+	
 	
 	/**
 	 * ctor initializes as per the super and creates a dictionary, discardFrac implied at 0.0
@@ -34,6 +36,8 @@ public class SweetSpotHashFn extends HashFn{
 		for(Entry entry: hashFormula){entry = null;}
 		this.dictionary = new Dictionary(this.compareType);
 	}//ctor
+	
+	
 	
 	/**
 	 * ctor initializes as per the super and creates a dictionary
@@ -51,6 +55,8 @@ public class SweetSpotHashFn extends HashFn{
 			this.discardFraction = discardFraction;
 	}//ctor
 
+	
+	
 	/**
 	 * hash
 	 * 
@@ -89,6 +95,8 @@ public class SweetSpotHashFn extends HashFn{
 		return hashCode;
 	}//hash
 	
+	
+	
 	/**
 	 * compileHashFormula
 	 * 
@@ -101,7 +109,7 @@ public class SweetSpotHashFn extends HashFn{
 		int j;
 		
 		
-		//determine if hashFormula values are still in the sweetspot range
+		//determine if hashFormula values are still in the sweetSpot range
 		boolean[] inSweetSpot = new boolean[this.codeSize];
 		boolean[] inHashFormula = new boolean[this.codeSize];
 		for(boolean bool : inHashFormula){bool = false;}
@@ -146,6 +154,8 @@ public class SweetSpotHashFn extends HashFn{
 		
 	}
 
+	
+	
 	/**
 	 * getName
 	 * 
