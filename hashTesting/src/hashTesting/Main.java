@@ -30,18 +30,8 @@ public class Main
         episodeList = new ArrayList<WME[]>();
         hashCodeList = new ArrayList<int[]>();
         hashFunctions = new ArrayList<HashFn>();
-        //hashFunctions.add(new RandomHashFn(HashFn.CODE_SIZE)); 
-        //hashFunctions.add(new DummyHashFn(HashFn.CODE_SIZE));
-        
-        for(int codeSize = 50; codeSize<= 200; codeSize+= 50){
-        	//hashFunctions.add(new FoldingHashFn(codeSize));
-        	for(double discardFraction = 0.0; discardFraction<1.0; discardFraction+=.05){	
-        		hashFunctions.add(new SweetSpotHashFn(codeSize,discardFraction));
-        	}
-        }
-
     }//ctor
-
+    
     /**
      * Special version of ctor that uses a given random number seed. (For testing)
      */
@@ -156,6 +146,25 @@ public class Main
         
         
     }//loadEpisodes
+    
+    /**
+     * addHashFunctions
+     * 
+     * inits the hashFunctions list for a given codesize
+     */
+    public void addHashFunctions(int codeSize)
+    {
+    	//These aren't really needed anymore
+//        hashFunctions.add(new RandomHashFn(HashFn.CODE_SIZE)); 
+//        hashFunctions.add(new DummyHashFn(HashFn.CODE_SIZE));
+    	
+        hashFunctions.add(new FoldingHashFn(codeSize));
+        for(double discardFraction = 0.0; discardFraction<1.0; discardFraction+=.05){	
+        		hashFunctions.add(new SweetSpotHashFn(codeSize,discardFraction));
+        }
+        hashFunctions.add(new GAHashFn(codeSize, this.episodeList, WME.ATTR + WME.VAL));
+            	
+    }//addHashFunctions
     
     /**
      * genOneEpisode
@@ -342,14 +351,11 @@ public class Main
 
         	//use the hashfunciton to create a hashcode for the given episode
         	hashVal = fn.hash(episodeList.get(testEp));
-        	//System.out.print("\n");//TODO debug
-            //for(int i: hashVal)  {System.out.print(i);}//TODO debug
-            //if(testPrevious)      {System.out.print("recur ");}//TODO debug
+
         	//test the selected episode and record the result
         	if(!testPrevious){
         		if(findHash(hashVal) < 0){
         			uniqueSuccesses++;
-        			//System.out.print("success");//TODO debug
         		}
                 
         		//Add the hashcode to the list
@@ -360,7 +366,6 @@ public class Main
         	}//if
         	else if(findHash(hashVal) > 0) {
         		recurSuccesses++;
-        		//System.out.print("success");//TODO debug
         	}
         	
         }//while
@@ -385,23 +390,23 @@ public class Main
         //Step 1:  load the data from the file specified in input[0]
         myself.loadEpisodes("data.txt");
         
-        //Step 1.5:  If using the GAHashFn it has to be added now because it takes
-        //the episodeList as an argument.
-        myself.hashFunctions.add(new GAHashFn(HashFn.CODE_SIZE, myself.episodeList, WME.ATTR + WME.VAL));
+        //Step 2:  Iterate over a range of hash code sizes
+        for(int codeSize = 5; codeSize<= 125; codeSize+= 10){ 
+        	System.out.println("testing hash functions for hash code size: " + codeSize);
+        	myself.hashFunctions = new ArrayList<HashFn>();
+        	myself.addHashFunctions(codeSize);
+
+			// Step 3: Test each hash function and print the result
+			System.out.println("Name\tUnique\tRecur");
+			System.out.println("----\t------\t-----");
+
+			for (HashFn fn : myself.hashFunctions) {
+				double[] results = myself.calculateSuccess(fn);
+				System.out.println(fn.getName() + "\t" + results[0] + "\t"
+						+ results[1]);
+			}//for
+        }//for
         
-        //Step 2:  Test it and print the result
-        System.out.println("Name\tUnique\tRecur");
-        System.out.println("----\t------\t-----");
-        
-        int bookmark= 0;
-        for(HashFn fn : myself.hashFunctions) {
-        	if (bookmark != fn.codeSize){
-            	System.out.print("\n\nCode Size: " + fn.codeSize + "\n\n\n\n\n");
-            	bookmark = fn.codeSize;
-        	}
-            double[] results = myself.calculateSuccess(fn);
-        	System.out.println(fn.getName() + "\t" + results[0] + "\t" + results[1]);
-        }
     }//main
 
     
