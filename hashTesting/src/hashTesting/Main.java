@@ -34,14 +34,8 @@ public class Main
 
         hashCodeEpList = new ArrayList<Integer>();
         //hashFunctions.add(new RandomHashFn(HashFn.CODE_SIZE)); 
-        //hashFunctions.add(new DummyHashFn(HashFn.CODE_SIZE));
+        //hashFunctions.add(new DummyHashFn(HashFn.CODE_SIZE));        
         
-        for(int codeSize = 150; codeSize<= 200; codeSize+= 25){
-        	//hashFunctions.add(new FoldingHashFn(codeSize));
-        	for(double discardFraction = 0.0; discardFraction<1.0; discardFraction+=.01){	
-        		hashFunctions.add(new SweetSpotHashFn(codeSize,discardFraction));
-        	}
-        }
     }//ctor
     
     /**
@@ -167,12 +161,12 @@ public class Main
     public void addHashFunctions(int codeSize)
     {
     	
-        hashFunctions.add(new FoldingHashFn(codeSize));
-        for(double discardFraction = 0.0; discardFraction<=0.1; discardFraction+=.05){	
+        //hashFunctions.add(new FoldingHashFn(codeSize));
+        for(double discardFraction = 0.0; discardFraction<=0.1; discardFraction+=.01){	
         		hashFunctions.add(new SweetSpotHashFn(codeSize,discardFraction));
         }
-        hashFunctions.add(new GAHashFn(codeSize, this.episodeList, WME.ATTR + WME.VAL));
-        hashFunctions.add(new LSHashFn(codeSize, 5));
+        //hashFunctions.add(new GAHashFn(codeSize, this.episodeList, WME.ATTR + WME.VAL));
+        //hashFunctions.add(new LSHashFn(codeSize, 5));
             	
     }//addHashFunctions
     
@@ -453,7 +447,7 @@ public class Main
         myself.loadEpisodes("data.txt");
         
         //Step 2:  Iterate over a range of hash code sizes
-        for(int codeSize = 10; codeSize<= 130; codeSize+= 10){ 
+        for(int codeSize = 150; codeSize<= 200; codeSize+= 25){ 
         	System.out.println("\ntesting hash functions for hash code size: " + codeSize);
         	myself.hashFunctions = new ArrayList<HashFn>();
         	myself.addHashFunctions(codeSize);
@@ -470,15 +464,7 @@ public class Main
         }//for
         
 
-        int bookmark= 0;
-        for(HashFn fn : myself.hashFunctions) {
-        	if (bookmark != fn.codeSize){
-            	System.out.print("\n\nCode Size: " + fn.codeSize + "\n\n\n\n\n");
-            	bookmark = fn.codeSize;
-        	}
-            double[] results = myself.calculateSuccess(fn);
-        	System.out.println(fn.getName() + "\t" + results[0] + "\t" + results[1] + "\t" + results[2]);
-        }
+       
 
     }//main
 
