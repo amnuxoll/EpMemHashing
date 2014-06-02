@@ -21,7 +21,8 @@ public class Main
     protected ArrayList<int[]> hashCodeList;
     protected ArrayList<HashFn> hashFunctions; //the list of hash fns to test
     protected Random rand = new Random();
-
+    protected ArrayList<Integer> hashCodeEpList; //keeps track of which hashes belong
+    										 //to which episodes
     /**
      * ctor inits instance variables
      */
@@ -30,12 +31,13 @@ public class Main
         episodeList = new ArrayList<WME[]>();
         hashCodeList = new ArrayList<int[]>();
         hashFunctions = new ArrayList<HashFn>();
+        hashCodeEpList = new ArrayList<Integer>();
         //hashFunctions.add(new RandomHashFn(HashFn.CODE_SIZE)); 
         //hashFunctions.add(new DummyHashFn(HashFn.CODE_SIZE));
         
-        for(int codeSize = 50; codeSize<= 200; codeSize+= 50){
+        for(int codeSize = 150; codeSize<= 200; codeSize+= 25){
         	//hashFunctions.add(new FoldingHashFn(codeSize));
-        	for(double discardFraction = 0.0; discardFraction<1.0; discardFraction+=.05){	
+        	for(double discardFraction = 0.0; discardFraction<1.0; discardFraction+=.01){	
         		hashFunctions.add(new SweetSpotHashFn(codeSize,discardFraction));
         	}
         }
@@ -267,7 +269,45 @@ public class Main
     	
     }//genEpisodes
 
-
+    /**
+     * findSimilarity
+     * 
+     * this method is called if the findHash method does not find an identical 
+     * hashCode.  
+     * 
+     *  @param hashVal is an array of ints representing the hashcode to search
+     *  for within the hashcode list, 
+     *  @return returns a double representing the highest percentage of 
+     *  similarity between the given hashcode and the hashcodes within the list 
+     * 
+     */
+    
+    public double[] findSimilarity(int[] hashVal, int codeSize, int testEp)
+    {
+    	double[] ret = new double[2];
+    	double highestSimilarity = 0;
+    	double similarIndex = -1;
+    	double total = codeSize;
+    	//loop through the hashCodeList and compare each int in the array
+    	for(int i = 0; i < hashCodeList.size(); i++){
+    		int similar = 0;
+    		for(int j = 0; j < hashVal.length; j++) {
+    			//if the ints are the same, add to the similarity value
+    			if (hashVal[j] == hashCodeList.get(i)[j]) {
+    				similar++;
+    			}
+    		}
+    		if (similar > highestSimilarity){
+    			highestSimilarity = similar;
+    			similarIndex = hashCodeEpList.get(i);
+    		}
+    	}
+    	ret[0] = highestSimilarity/total;
+    	ret[1] = similarIndex-testEp;
+    	
+    	return ret;
+    }
+    
 	/**
      * findHash
      * 
@@ -312,7 +352,7 @@ public class Main
      */
     public double[] calculateSuccess(HashFn fn)
     {
-        int currEp = 1;  //index of current episiode in the episodeList
+        int currEp = 1;  //index of current episode in the episodeList
         int testEp;
         
         int[] hashVal = new int[fn.codeSize];
@@ -321,8 +361,10 @@ public class Main
         double uniqueTests = 0;
         double recurSuccesses = 0;
         double uniqueSuccesses = 0;
+        double similarSuccess = 0;
 
         hashCodeList.add(fn.hash(episodeList.get(0)));
+        hashCodeEpList.add(new Integer(0));
         
         while(currEp < episodeList.size())
         {
@@ -348,25 +390,34 @@ public class Main
         		if(findHash(hashVal) < 0){
         			uniqueSuccesses++;
         			//System.out.print("success");//TODO debug
+        			
         		}
                 
         		//Add the hashcode to the list
         		hashCodeList.add(hashVal);
+        		hashCodeEpList.add(new Integer(testEp));
 
                 //Advance to next episode
         		currEp++;
         	}//if
-        	else if(findHash(hashVal) > 0) {
+        	else if((findHash(hashVal) > 0)&&testPrevious) {
         		recurSuccesses++;
         		//System.out.print("success");//TODO debug
         	}
-        	
+        	else if ((findHash(hashVal)<0)&&testPrevious){
+        		if (findSimilarity(hashVal, fn.codeSize, testEp)[1] == 0){
+        			similarSuccess = similarSuccess + (findSimilarity(hashVal, fn.codeSize, testEp)[0]);
+        		}
+        		
+        	}
         }//while
 
         //Step 5:  calculate the return value
-        double[] result = new double[2];
+        double[] result = new double[3];
         result[0] = uniqueSuccesses / uniqueTests;
         result[1] = recurSuccesses / recurTests;
+        result[2] = similarSuccess / (recurTests - recurSuccesses);
+        hashCodeList.clear();
         return result;
         
     }//calculateSuccess
@@ -394,7 +445,7 @@ public class Main
             	bookmark = fn.codeSize;
         	}
             double[] results = myself.calculateSuccess(fn);
-        	System.out.println(fn.getName() + "\t" + results[0] + "\t" + results[1]);
+        	System.out.println(fn.getName() + "\t" + results[0] + "\t" + results[1] + "\t" + results[2]);
         }
     }//main
 

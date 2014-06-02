@@ -19,7 +19,7 @@ public class SweetSpotHashFn extends HashFn{
 	private int count;
 	private double discardFraction = 0.0;
 	private Entry[] hashFormula;
-	private int compareType = WME.ATTR;
+	private int compareType = WME.ATTR+WME.VAL;
 	private int n;
 	
 	
@@ -105,7 +105,7 @@ public class SweetSpotHashFn extends HashFn{
 	private void compileHashFormula() 
 	{
 		//find the magic number 
-		n = (int) discardFraction *dictionary.getSize(); 
+		n = (int) (discardFraction *dictionary.getSize()); 
 		int j;
 		
 		

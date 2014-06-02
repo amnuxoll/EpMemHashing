@@ -118,13 +118,13 @@ public class EntryTest extends MainTest {
     	
     	
     	// they are equal if they have the same number of total occurrences
-    	assertEquals(entry1.compareTo(entry2), -1);
+    	assertEquals(entry1.compareTo(entry2), -2);
     	
     	// make them equal and try again
     	entry2.addOccurrence(8);
     	
-    	assertEquals(entry1.compareTo(entry2), 0);
-    	assertEquals(entry2.compareTo(entry1), 0);
+    	assertEquals(entry1.compareTo(entry2), -1);
+    	assertEquals(entry2.compareTo(entry1), 1);
     }
 }
 
