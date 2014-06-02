@@ -418,6 +418,7 @@ public class Main
         result[1] = recurSuccesses / recurTests;
         result[2] = similarSuccess / (recurTests - recurSuccesses);
         hashCodeList.clear();
+        hashCodeEpList.clear();
         return result;
         
     }//calculateSuccess
