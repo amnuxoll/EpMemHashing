@@ -3,6 +3,7 @@ package unitTests;
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.junit.After;
 import org.junit.Before;
@@ -136,7 +137,7 @@ public class HashFnTest extends HashFn
     {
     	SweetSpotHashFn fn = new SweetSpotHashFn(4);
     	ArrayList<WME[]> testList = new ArrayList<WME[]>();
-		testList = MainTest.makeQuickEpList();
+		testList = MainTest.makeQuickEpList2();
 		ArrayList<int[]> hashCodeList = new ArrayList<int[]>();
 		
 		for(int i = 0; i<testList.size(); i++){
@@ -161,6 +162,74 @@ public class HashFnTest extends HashFn
 		assertEquals(hashCodeList.get(2)[3], 1);
 		
     }//testSweetSpotHashFn
+    
+    /**
+     * tests the hash() method in SweetSpotHashFn
+     */
+    @Test
+    public void testGAHashFn()
+    {
+    	ArrayList<WME[]> testList = new ArrayList<WME[]>();
+		testList = MainTest.makeQuickEpList4();
+    	GAHashFn fn = new GAHashFn(4, testList, WME.ATTR + WME.VAL);
+		ArrayList<int[]> hashCodeList = new ArrayList<int[]>();
+		
+		for(int i = 0; i < testList.size(); i++){
+			hashCodeList.add(fn.hash(testList.get(i)));
+		}
+
+		//No two hash codes should be identical
+		assertFalse(Arrays.equals(hashCodeList.get(0), hashCodeList.get(1)));
+		assertFalse(Arrays.equals(hashCodeList.get(0), hashCodeList.get(2)));
+		assertFalse(Arrays.equals(hashCodeList.get(0), hashCodeList.get(3)));
+		assertFalse(Arrays.equals(hashCodeList.get(1), hashCodeList.get(2)));
+		assertFalse(Arrays.equals(hashCodeList.get(1), hashCodeList.get(3)));
+		assertFalse(Arrays.equals(hashCodeList.get(2), hashCodeList.get(3)));
+		
+    }//testGAHashFn
+    
+    /**
+     * tests the hash() method in LSHashFn.   
+     */
+    @Test
+    public void testLSHashFn()
+    {
+        // create first episode
+        WME[] ep = new WME[3];
+        ep[0] = new WME("(S1 ^foo 1)");  //index 0
+        ep[1] = new WME("(S1 ^bar 2)");  //index 1
+        ep[2] = new WME("(S1 ^baz 3)");  //index 2
+
+        //Test first episode
+        LSHashFn fn = new LSHashFn();
+        int[] test = fn.hash(ep);
+        String hashStr = "" + test[0] + test[1] + test[2] + test[3];
+        assertEquals(hashStr, "1111");
+
+        // create second episode
+        ep = new WME[3];
+        ep[0] = new WME("(S1 ^foo 44)");  //index 3
+        ep[1] = new WME("(S1 ^bar 2)");   //index 1
+        ep[2] = new WME("(S1 ^baz 3)");   //index 2
+
+        //Test second episode
+        test = fn.hash(ep);
+        hashStr = "" + test[0] + test[1] + test[2] + test[3];
+        assertEquals(hashStr, "1000");
+
+        // create third episode
+        ep = new WME[3];
+        ep[0] = new WME("(S1 ^foo 44)"); //index 3
+        ep[1] = new WME("(S1 ^bar 2)");  //index 1
+        ep[2] = new WME("(S1 ^baz 55)"); //index 0 (reused)
+
+        //Test second episode
+        test = fn.hash(ep);
+        hashStr = "" + test[0] + test[1] + test[2] + test[3];
+        assertEquals(hashStr, "1000");
+
+    }//testLSHashFn
+    
     
     /**
      * Tears down the test fixture.

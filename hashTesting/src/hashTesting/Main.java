@@ -31,6 +31,7 @@ public class Main
         episodeList = new ArrayList<WME[]>();
         hashCodeList = new ArrayList<int[]>();
         hashFunctions = new ArrayList<HashFn>();
+
         hashCodeEpList = new ArrayList<Integer>();
         //hashFunctions.add(new RandomHashFn(HashFn.CODE_SIZE)); 
         //hashFunctions.add(new DummyHashFn(HashFn.CODE_SIZE));
@@ -42,7 +43,7 @@ public class Main
         	}
         }
     }//ctor
-
+    
     /**
      * Special version of ctor that uses a given random number seed. (For testing)
      */
@@ -159,6 +160,23 @@ public class Main
     }//loadEpisodes
     
     /**
+     * addHashFunctions
+     * 
+     * inits the hashFunctions list for a given codesize
+     */
+    public void addHashFunctions(int codeSize)
+    {
+    	
+        hashFunctions.add(new FoldingHashFn(codeSize));
+        for(double discardFraction = 0.0; discardFraction<=0.1; discardFraction+=.05){	
+        		hashFunctions.add(new SweetSpotHashFn(codeSize,discardFraction));
+        }
+        hashFunctions.add(new GAHashFn(codeSize, this.episodeList, WME.ATTR + WME.VAL));
+        hashFunctions.add(new LSHashFn(codeSize, 5));
+            	
+    }//addHashFunctions
+    
+    /**
      * genOneEpisode
      * 
      * creates a single, randomly generated episode
@@ -232,6 +250,7 @@ public class Main
 
     }//genOneEpisode
 	
+    
     /**
      * genEpisodes
      * 
@@ -260,6 +279,7 @@ public class Main
     		sum += entry.getOccurrences().size();
     	}
 
+
     	//generate the episodes
     	for(int i = 0; i < howMany; ++i)
     	{
@@ -268,6 +288,7 @@ public class Main
     	}
     	
     }//genEpisodes
+
 
     /**
      * findSimilarity
@@ -382,15 +403,14 @@ public class Main
 
         	//use the hashfunciton to create a hashcode for the given episode
         	hashVal = fn.hash(episodeList.get(testEp));
-        	//System.out.print("\n");//TODO debug
-            //for(int i: hashVal)  {System.out.print(i);}//TODO debug
-            //if(testPrevious)      {System.out.print("recur ");}//TODO debug
+
         	//test the selected episode and record the result
         	if(!testPrevious){
         		if(findHash(hashVal) < 0){
         			uniqueSuccesses++;
         			//System.out.print("success");//TODO debug
         			
+
         		}
                 
         		//Add the hashcode to the list
@@ -402,7 +422,6 @@ public class Main
         	}//if
         	else if((findHash(hashVal) > 0)&&testPrevious) {
         		recurSuccesses++;
-        		//System.out.print("success");//TODO debug
         	}
         	else if ((findHash(hashVal)<0)&&testPrevious){
         		if (findSimilarity(hashVal, fn.codeSize, testEp)[1] == 0){
@@ -422,8 +441,6 @@ public class Main
         return result;
         
     }//calculateSuccess
-
-    
     
     /**
      * Constructor for objects of class Main
@@ -435,10 +452,24 @@ public class Main
         //Step 1:  load the data from the file specified in input[0]
         myself.loadEpisodes("data.txt");
         
-        //Step 2:  Test it and print the result
-        System.out.println("Name\tUnique\tRecur");
-        System.out.println("----\t------\t-----");
+        //Step 2:  Iterate over a range of hash code sizes
+        for(int codeSize = 10; codeSize<= 130; codeSize+= 10){ 
+        	System.out.println("\ntesting hash functions for hash code size: " + codeSize);
+        	myself.hashFunctions = new ArrayList<HashFn>();
+        	myself.addHashFunctions(codeSize);
+
+			// Step 3: Test each hash function and print the result
+			System.out.println("Name\tUnique\tRecur");
+			System.out.println("----\t------\t-----");
+
+			for (HashFn fn : myself.hashFunctions) {
+				double[] results = myself.calculateSuccess(fn);
+				System.out.println(fn.getName() + "\t" + results[0] + "\t"
+						+ results[1]);
+			}//for
+        }//for
         
+
         int bookmark= 0;
         for(HashFn fn : myself.hashFunctions) {
         	if (bookmark != fn.codeSize){
@@ -448,6 +479,7 @@ public class Main
             double[] results = myself.calculateSuccess(fn);
         	System.out.println(fn.getName() + "\t" + results[0] + "\t" + results[1] + "\t" + results[2]);
         }
+
     }//main
 
     

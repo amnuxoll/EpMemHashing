@@ -33,9 +33,9 @@ public class MainTest extends Main
     }
     
     /**
-     * a helpful method for quickly generating a small episode list
+     * a helpful method for quickly generating a list of two episodes
      */
-    public static ArrayList<WME[]> makeQuickEpList()
+    public static ArrayList<WME[]> makeQuickEpList2()
     {
         // create test episode
         WME testWME = new WME("(s1 ^color red)");
@@ -53,6 +53,37 @@ public class MainTest extends Main
 
         //add those to the episodeList
         ArrayList<WME[]> epList = new ArrayList<WME[]>();  
+        epList.add(episode1);
+        epList.add(episode2);
+        
+        
+        return epList;
+    	
+    }//makeQuickEpList
+
+    /**
+     * a helpful method for quickly generating a list of 4 episodes
+     */
+    public static ArrayList<WME[]> makeQuickEpList4()
+    {
+    	//start with the quick list
+    	ArrayList<WME[]> epList = makeQuickEpList2();  
+    	
+        // create a 3rd test episode
+        WME testWME = new WME("(s1 ^color red)");
+        WME test2WME = new WME("(s1 ^newbie one)");
+        WME[] episode1 = new WME[2];
+        episode1[0] = testWME;
+        episode1[1] = test2WME;
+        
+        // create a 4th test episode
+        testWME = new WME("(s1 ^color green)");
+        test2WME = new WME("(s1 ^newbie two)");
+        WME[] episode2 = new WME[2];
+        episode2[0] = testWME;
+        episode2[1] = test2WME;
+
+        //add those to the episodeList
         epList.add(episode1);
         epList.add(episode2);
         
@@ -185,7 +216,7 @@ public class MainTest extends Main
     @Test
     public void testCalcSuccess()
     {
-    	episodeList.addAll(makeQuickEpList());
+    	episodeList.addAll(makeQuickEpList2());
     	
         //Since we used a fixed random number seed, these results should always
         //be the same
