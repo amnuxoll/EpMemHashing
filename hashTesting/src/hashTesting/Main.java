@@ -161,12 +161,12 @@ public class Main
     public void addHashFunctions(int codeSize)
     {
     	
-        //hashFunctions.add(new FoldingHashFn(codeSize));
-        for(double discardFraction = 0.0; discardFraction<=0.1; discardFraction+=.01){	
+        hashFunctions.add(new FoldingHashFn(codeSize));
+        for(double discardFraction = 0.0; discardFraction<=0.6; discardFraction+=0.1){	
         		hashFunctions.add(new SweetSpotHashFn(codeSize,discardFraction));
         }
-        //hashFunctions.add(new GAHashFn(codeSize, this.episodeList, WME.ATTR + WME.VAL));
-        //hashFunctions.add(new LSHashFn(codeSize, 5));
+        hashFunctions.add(new GAHashFn(codeSize, this.episodeList, WME.ATTR + WME.VAL));
+        hashFunctions.add(new LSHashFn(codeSize, 1));
             	
     }//addHashFunctions
     
@@ -402,9 +402,6 @@ public class Main
         	if(!testPrevious){
         		if(findHash(hashVal) < 0){
         			uniqueSuccesses++;
-        			//System.out.print("success");//TODO debug
-        			
-
         		}
                 
         		//Add the hashcode to the list
@@ -416,6 +413,7 @@ public class Main
         	}//if
         	else if((findHash(hashVal) > 0)&&testPrevious) {
         		recurSuccesses++;
+        		similarSuccess++;
         	}
         	else if ((findHash(hashVal)<0)&&testPrevious){
         		if (findSimilarity(hashVal, fn.codeSize, testEp)[1] == 0){
@@ -429,7 +427,7 @@ public class Main
         double[] result = new double[3];
         result[0] = uniqueSuccesses / uniqueTests;
         result[1] = recurSuccesses / recurTests;
-        result[2] = similarSuccess / (recurTests - recurSuccesses);
+        result[2] = similarSuccess / recurTests;
         hashCodeList.clear();
         hashCodeEpList.clear();
         return result;
@@ -444,10 +442,10 @@ public class Main
         Main myself = new Main();
         
         //Step 1:  load the data from the file specified in input[0]
-        myself.loadEpisodes("data.txt");
+        myself.loadEpisodes("log_eaters_changesonly2.txt");
         
         //Step 2:  Iterate over a range of hash code sizes
-        for(int codeSize = 150; codeSize<= 200; codeSize+= 25){ 
+        for(int codeSize = 10; codeSize<= 130; codeSize+= 10){ 
         	System.out.println("\ntesting hash functions for hash code size: " + codeSize);
         	myself.hashFunctions = new ArrayList<HashFn>();
         	myself.addHashFunctions(codeSize);
@@ -458,8 +456,7 @@ public class Main
 
 			for (HashFn fn : myself.hashFunctions) {
 				double[] results = myself.calculateSuccess(fn);
-				System.out.println(fn.getName() + "\t" + results[0] + "\t"
-						+ results[1]);
+				System.out.println(fn.getName() + "\t" + results[0] + "\t" + results[1] + "\t" + results[2]);
 			}//for
         }//for
         
