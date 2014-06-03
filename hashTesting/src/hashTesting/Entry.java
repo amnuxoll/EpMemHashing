@@ -114,8 +114,8 @@ public class Entry implements Comparable<Entry> {
 	@Override
 	public int compareTo(Entry otherEntry)
 	{
-		int myOccur = this.occurrences.size();
-		int otherOccur = otherEntry.occurrences.size();
+		int myOccur = this.getSumOccurrences();
+		int otherOccur = this.getSumOccurrences();
 		
 		return otherOccur - myOccur;
 	}
