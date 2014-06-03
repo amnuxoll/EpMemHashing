@@ -33,8 +33,8 @@ public class SweetSpotHashFn extends HashFn{
 		super(size);
 		this.count = 0;
 		this.hashFormula = new Entry[this.codeSize];
-		for(Entry entry: hashFormula){entry = null;}
 		this.dictionary = new Dictionary(this.compareType);
+		for(int i = 0; i < this.hashFormula.length; ++i) {hashFormula[i] = null;}
 	}//ctor
 	
 	
@@ -46,11 +46,7 @@ public class SweetSpotHashFn extends HashFn{
 	 */
 	public SweetSpotHashFn(int size, double discardFraction)
 	{
-		super(size);
-		this.count = 0;
-		this.dictionary = new Dictionary(this.compareType);
-		this.hashFormula = new Entry[this.codeSize];
-		for(Entry entry: hashFormula){entry = null;}
+		this(size);
 		if(discardFraction <= 1.0 && discardFraction >=0.0)
 			this.discardFraction = discardFraction;
 	}//ctor
@@ -95,8 +91,82 @@ public class SweetSpotHashFn extends HashFn{
 		return hashCode;
 	}//hash
 	
-	
-	
+
+    /**
+     * generateHashFormula
+     */
+    private Entry[] generateHashFormula()
+    {
+		//find the magic number 
+		n = (int) (discardFraction *dictionary.getSize());
+
+        Entry[] newFormula = new Entry[this.codeSize];
+
+        for(int i = 0; i < this.codeSize; ++i) {
+        	newFormula[i] = dictionary.getEntryAt((i + n) % dictionary.getSize());
+        }
+
+        return newFormula;
+
+    }//generateHashFormula
+    
+
+	/**
+	 * compileHashFormulaNux
+	 * 
+	 * designs the hash f
+	 */
+	private void compileHashFormulaNux() 
+	{
+        Entry[] formulaEntries = generateHashFormula();
+
+        //For each entry in the old  hash formula that's not in the new one,
+        //set it to null.  Otherwise, set the entry in the new formula to null
+        for(int i = 0; i < this.hashFormula.length; ++i) {
+            WME oldWME = this.hashFormula[i].getEntry();
+            boolean found = false;
+            for(int j = 0; j < formulaEntries.length; ++j) {
+                WME newWME = formulaEntries[j].getEntry();
+                if (oldWME.equalsWithType(newWME, this.compareType)) {
+                    found = true;
+                    break;
+                }
+            }//for
+
+            if (!found)
+            {
+                this.hashFormula[i] = null;
+            }
+                
+        }//for
+
+        //For each entry in the new hash formula that's not in the old one,
+        //insert it in a null spot
+        for(int j = 0; j < formulaEntries.length; ++j) {
+            WME newWME = formulaEntries[j].getEntry();
+            boolean found = false;
+            for(int i = 0; i < this.hashFormula.length; ++i) {
+                WME oldWME = this.hashFormula[i].getEntry();
+                if (oldWME == null) continue;
+                else if (oldWME.equalsWithType(newWME, this.compareType))
+                {
+                    found = true;
+                }
+            }
+
+            //ok insert it
+            if (!found) {
+                for(int i = 0; i < this.hashFormula.length; ++i) {
+                    if (this.hashFormula[i] == null) {
+                        this.hashFormula[i] = formulaEntries[j];
+                        break;
+                    }
+                }//for
+            }//if
+        }//for
+
+    }//compileHashFormula
+    
 	/**
 	 * compileHashFormula
 	 * 
@@ -110,9 +180,9 @@ public class SweetSpotHashFn extends HashFn{
 		
 		
 		//determine if hashFormula values are still in the sweetSpot range
-		boolean[] inSweetSpot = new boolean[this.codeSize];
+		boolean[] inSweetSpot = new boolean[this.codeSize];  
 		boolean[] inHashFormula = new boolean[this.codeSize];
-		for(boolean bool : inHashFormula){bool = false;}
+		for(int i = 0; i < inHashFormula.length; ++i) {inHashFormula[i] = false;}
 		
 		for(int i = 0; i< this.codeSize; i++){
 			inSweetSpot[i] = false;
@@ -163,7 +233,7 @@ public class SweetSpotHashFn extends HashFn{
 	 */
 	public String getName()
 	{
-		return "" + discardFraction;
+		return "Sweet Spot(" + (double)((int)(100*discardFraction))/100.0 + ")";
 	}//getName
 	
 }//class SweetSpotHashFn
