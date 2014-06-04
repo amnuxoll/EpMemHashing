@@ -38,7 +38,7 @@ public class GAHashFn extends DummyHashFn {
         evolve();
     }
     
-    /** 
+	/** 
      * mate
      * 
      * creates an offspring by generating an offspring from two random members 
@@ -86,7 +86,7 @@ public class GAHashFn extends DummyHashFn {
     	}
     	
     	//mutate?
-    	if (rand.nextInt(this.MUTATE) < this.MUTATE) {
+    	if (rand.nextInt(MUTATE) < MUTATE) {
     		int index = rand.nextInt(this.codeSize);
     		newHasher[index] = dict.getRandomEntry().getEntry();
     	}
@@ -214,5 +214,29 @@ public class GAHashFn extends DummyHashFn {
 	public String getName() {
 		return "GA HashFn (cheater)";
 	}
+	
+	/**
+	 * prints the current best hasher as an array of bits, one bit per WME in
+	 * the dictionary. If the WME is in the hasher it prints "1". otherwise "0"
+	 * 
+	 */
+	private void printHasherIndex() {
+		System.out.println("GA Hasher: ");
+		for(int i = 0; i < this.dict.getSize(); ++i) {
+			Entry entry = dict.getEntryAt(i);
+			int digit = 0;
+			for(int j = 0; j < this.bestHasher.length; ++j) {
+				if (bestHasher[j].equals(entry.getEntry())) {
+					digit = 1;
+					break;
+				}
+			}
+			System.out.print(digit);
+		}//for
+		System.out.println();
+		
+	}//printHasherIndex
+
+
 
 }//class GAHashFn
