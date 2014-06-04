@@ -446,12 +446,13 @@ public class Main
         
         //Step 2:  Iterate over a range of hash code sizes
         for(int codeSize = 20; codeSize<= 200; codeSize+= 20){ 
-        	System.out.println("\n\n\n\n\n\n\n\n\ntesting hash functions for hash code size: " + codeSize +"\n");
+        	System.out.println("\ntesting hash functions for hash code size: " + codeSize +"\n");
         	myself.hashFunctions = new ArrayList<HashFn>();
         	myself.addHashFunctions(codeSize);
 
 			// Step 3: Test each hash function and print the result
-			System.out.println("DiscardFraction\tUnique\tRecurring\tSimilar");
+			System.out.println("DiscardFraction\tUnique\tRecurring");
+			System.out.println();
 
 			for (HashFn fn : myself.hashFunctions) {
 				double[] results = myself.calculateSuccess(fn);

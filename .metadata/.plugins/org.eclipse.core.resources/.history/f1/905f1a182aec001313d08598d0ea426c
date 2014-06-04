@@ -161,12 +161,12 @@ public class Main
     public void addHashFunctions(int codeSize)
     {
     	
-        //hashFunctions.add(new FoldingHashFn(codeSize));
+        hashFunctions.add(new FoldingHashFn(codeSize));
         for(double discardFraction = 0.0; discardFraction<=0.6; discardFraction+=0.1){	
         		hashFunctions.add(new SweetSpotHashFn(codeSize,discardFraction));
         }
-        //hashFunctions.add(new GAHashFn(codeSize, this.episodeList, WME.ATTR + WME.VAL));
-        //hashFunctions.add(new LSHashFn(codeSize, 1));
+        hashFunctions.add(new GAHashFn(codeSize, this.episodeList, WME.ATTR + WME.VAL));
+        hashFunctions.add(new LSHashFn(codeSize, 1));
             	
     }//addHashFunctions
     
@@ -445,13 +445,14 @@ public class Main
         myself.loadEpisodes("log_eaters_changesonly2.txt");
         
         //Step 2:  Iterate over a range of hash code sizes
-        for(int codeSize = 20; codeSize<= 200; codeSize+= 20){ 
-        	System.out.println("\n\n\n\n\n\n\n\n\ntesting hash functions for hash code size: " + codeSize +"\n");
+        for(int codeSize = 10; codeSize<= 130; codeSize+= 10){ 
+        	System.out.println("\ntesting hash functions for hash code size: " + codeSize);
         	myself.hashFunctions = new ArrayList<HashFn>();
         	myself.addHashFunctions(codeSize);
 
 			// Step 3: Test each hash function and print the result
-			System.out.println("DiscardFraction\tUnique\tRecurring\tSimilar");
+			System.out.println("Name\tUnique\tRecur");
+			System.out.println("----\t------\t-----");
 
 			for (HashFn fn : myself.hashFunctions) {
 				double[] results = myself.calculateSuccess(fn);

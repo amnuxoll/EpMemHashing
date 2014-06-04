@@ -451,7 +451,7 @@ public class Main
         	myself.addHashFunctions(codeSize);
 
 			// Step 3: Test each hash function and print the result
-			System.out.println("DiscardFraction\tUnique\tRecurring\tSimilar");
+			System.out.println("DiscardFraction\tUnique\tRecurring");
 
 			for (HashFn fn : myself.hashFunctions) {
 				double[] results = myself.calculateSuccess(fn);
