@@ -230,6 +230,25 @@ public class HashFnTest extends HashFn
 
     }//testLSHashFn
     
+    /**
+     * tests the generateHashFormula method.   
+     */
+    @Test
+    public void testGenHashForm()
+    {
+    	// make hashfn and create quick episode list
+    	SweetSpotHashFn fn = new SweetSpotHashFn(4, 0.0);
+    	ArrayList<WME[]> testList = new ArrayList<WME[]>();
+		testList = MainTest.makeQuickEpList4();
+    	
+		fn.hash(testList.get(0));
+		
+		assertEquals(fn.getDictionaryEntry(0), "color red");
+		
+		fn.hash(testList.get(1));
+		fn.hash(testList.get())
+		
+    }
     
     /**
      * Tears down the test fixture.

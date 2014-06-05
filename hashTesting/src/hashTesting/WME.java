@@ -226,6 +226,18 @@ public class WME
         return "(" + id + " ^" + attribute + " " + value + ")";
     }//toString
         
+    /** @return human readable version of the attribute */
+    public String getAttrib()
+    {
+        return this.attribute;
+    }//getAttrib
+    
+    /** @return human readable version of the value */
+    public String getVal()
+    {
+        return this.value;
+    }//getVal
+    
     /** @return true if given WME has the same attr and value as this */
     @Override
     public boolean equals(Object otherObj)

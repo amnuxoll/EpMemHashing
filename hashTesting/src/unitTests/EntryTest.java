@@ -104,10 +104,11 @@ public class EntryTest extends MainTest {
     @Test
     public void testCompareTo()
     {
-    	ArrayList<WME[]> testList = makeQuickEpList2();
+    	WME test1 = new WME("(A1 ^steak sauce)");
+    	WME test2 = new WME("(C2 ^ham bone)");
     	// make 2 entries
-    	Entry entry1 = new Entry(3, testList.get(0)[1]);
-    	Entry entry2 = new Entry(3, testList.get(0)[1]);
+    	Entry entry1 = new Entry(3, test1);
+    	Entry entry2 = new Entry(3, test2);
     	// add some occurrences
     	entry1.addOccurrence(1);
     	entry1.addOccurrence(2);
@@ -118,13 +119,13 @@ public class EntryTest extends MainTest {
     	
     	
     	// they are equal if they have the same number of total occurrences
-    	assertEquals(entry1.compareTo(entry2), -2);
+    	assertEquals(entry1.compareTo(entry2), -1);
     	
     	// make them equal and try again
     	entry2.addOccurrence(8);
     	
-    	assertEquals(entry1.compareTo(entry2), -1);
-    	assertEquals(entry2.compareTo(entry1), 1);
+    	assertEquals(entry1.compareTo(entry2), 0);
+    	assertEquals(entry2.compareTo(entry1), 0);
     }
 }
 

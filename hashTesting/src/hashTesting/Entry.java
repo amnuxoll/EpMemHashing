@@ -115,7 +115,7 @@ public class Entry implements Comparable<Entry> {
 	public int compareTo(Entry otherEntry)
 	{
 		int myOccur = this.getSumOccurrences();
-		int otherOccur = this.getSumOccurrences();
+		int otherOccur = otherEntry.getSumOccurrences();
 		
 		return otherOccur - myOccur;
 	}

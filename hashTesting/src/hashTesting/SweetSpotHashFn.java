@@ -2,8 +2,6 @@ package hashTesting;
 
 import java.util.Arrays;
 
-
-
 /**
  * A hash function that creates a dictionary of the WME's in all of the 
  * episodes and sorts them by number of occurrences to find the most descriptive
@@ -196,6 +194,23 @@ public class SweetSpotHashFn extends HashFn{
 			}
 		}
 		
+	}
+	
+	/**
+	 * getDictionaryEntry
+	 * 
+	 * getter method
+	 * 
+	 * @param int index of dictionary to be returned
+	 * @return returns a string of the attribute and value of that entry
+	 * 
+	 */
+	public String getDictionaryEntry(int index)
+	{
+		String ret = this.dictionary.getEntryAt(index).getEntry().getAttrib() +
+					 " " + this.dictionary.getEntryAt(index).getEntry().getVal();
+		
+		return ret;
 	}
 
 	
