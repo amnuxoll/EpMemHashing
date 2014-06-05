@@ -241,13 +241,22 @@ public class HashFnTest extends HashFn
     	ArrayList<WME[]> testList = new ArrayList<WME[]>();
 		testList = MainTest.makeQuickEpList4();
     	
+		//add color red and color blue
 		fn.hash(testList.get(0));
-		
+		//color red should be at the top
 		assertEquals(fn.getDictionaryEntry(0), "color red");
 		
+		//add color green and alligator eats
 		fn.hash(testList.get(1));
-		//fn.hash(testList.get())
+		//add color green and newbie two
+		fn.hash(testList.get(3));
+		//add color green and alligator eats color green now occurs most, but 
+		fn.hash(testList.get(1));
 		
+		//it should still be below color red so the formula doesn't change too
+		//much. color red should be at the top
+		assertEquals(fn.getDictionaryEntry(0), "color red");
+		assertEquals(fn.getDictionaryEntry(2), "color green");
     }
     
     /**

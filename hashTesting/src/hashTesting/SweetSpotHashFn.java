@@ -131,7 +131,7 @@ public class SweetSpotHashFn extends HashFn{
         	}
         	
         }
-        Arrays.sort(newFormula);
+        //Arrays.sort(newFormula);
         return newFormula;
 
     }//generateHashFormula
