@@ -1,5 +1,7 @@
 package hashTesting;
 
+import java.util.Arrays;
+
 
 
 /**
@@ -129,7 +131,7 @@ public class SweetSpotHashFn extends HashFn{
         	}
         	
         }
-
+        Arrays.sort(newFormula);
         return newFormula;
 
     }//generateHashFormula
