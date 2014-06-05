@@ -246,7 +246,7 @@ public class HashFnTest extends HashFn
 		assertEquals(fn.getDictionaryEntry(0), "color red");
 		
 		fn.hash(testList.get(1));
-		fn.hash(testList.get())
+		//fn.hash(testList.get())
 		
     }
     
