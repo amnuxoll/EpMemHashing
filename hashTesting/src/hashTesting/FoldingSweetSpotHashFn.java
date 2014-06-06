@@ -14,7 +14,7 @@ import java.util.Arrays;
  * @version Tuesday May 27, 2014
  */
 
-public class SweetSpotHashFn extends HashFn{
+public class FoldingSweetSpotHashFn extends SweetSpotHashFn{
 	
 	/**list of all WMEs and their frequencies*/
 	protected Dictionary dictionary; 
@@ -41,7 +41,7 @@ public class SweetSpotHashFn extends HashFn{
 	 * ctor initializes as per the super and creates a dictionary, discardFrac implied at 0.0
 	 * @param size
 	 */
-	public SweetSpotHashFn(int size)
+	public FoldingSweetSpotHashFn(int size)
 	{
 		super(size);
 		this.episodeIndex = 0;
@@ -57,7 +57,7 @@ public class SweetSpotHashFn extends HashFn{
 	 * @param size
 	 * @param discardFraction
 	 */
-	public SweetSpotHashFn(int size, double discardFraction)
+	public FoldingSweetSpotHashFn(int size, double discardFraction)
 	{
 		this(size);
 		if(discardFraction <= 1.0 && discardFraction >=0.0)
@@ -115,7 +115,7 @@ public class SweetSpotHashFn extends HashFn{
     /**
      * generateHashFormula
      */
-    private Entry[] generateHashFormula()
+    protected Entry[] generateHashFormula()
     {
 		//find the magic number 
 		discardNumber = (int) (discardFraction *dictionary.getSize());
@@ -131,7 +131,6 @@ public class SweetSpotHashFn extends HashFn{
         	}
         	
         }
-        //Arrays.sort(newFormula);
         return newFormula;
 
     }//generateHashFormula
@@ -142,7 +141,7 @@ public class SweetSpotHashFn extends HashFn{
 	 * 
 	 * designs the hash formula
 	 */
-	private void compileHashFormula() 
+	protected void compileHashFormula() 
 	{
 		//find the magic number 
 		discardNumber = (int) (discardFraction *dictionary.getSize()); 
@@ -197,20 +196,8 @@ public class SweetSpotHashFn extends HashFn{
 		}
 		
 	}
+
 	
-	/**
-	 * getDictionaryEntry
-	 * 
-	 * @param index of the dictionary entry
-	 * @return returns a string that is the attribute and value of that entry
-	 */
-	public String getDictionaryEntry(int index)
-	{
-		String ret = this.dictionary.getEntryAt(index).getEntry().getAttrib() +
-				" " + this.dictionary.getEntryAt(index).getEntry().getVal();
-		
-		return ret;
-	}
 	
 	/**
 	 * getName
@@ -222,4 +209,4 @@ public class SweetSpotHashFn extends HashFn{
 		return ""+ (double)((int)(100*discardFraction))/100.0;
 	}//getName
 	
-}//class SweetSpotHashFn
+}//class FoldingSweetSpotHashFn

@@ -162,7 +162,7 @@ public class Main
     {
     	
         //hashFunctions.add(new FoldingHashFn(codeSize));
-        for(double discardFraction = 0.0; discardFraction<=0.6; discardFraction+=0.1){	
+        for(double discardFraction = 0.0; discardFraction<=0.1; discardFraction+=0.01){	
         		hashFunctions.add(new SweetSpotHashFn(codeSize,discardFraction));
         }
         //hashFunctions.add(new GAHashFn(codeSize, this.episodeList, WME.ATTR + WME.VAL));
@@ -442,7 +442,7 @@ public class Main
         Main myself = new Main();
         
         //Step 1:  load the data from the file specified in input[0]
-        myself.loadEpisodes("log_eaters_changesonly2.txt");
+        myself.loadEpisodes("data.txt");
         
         //Step 2:  Iterate over a range of hash code sizes
         for(int codeSize = 20; codeSize<= 200; codeSize+= 20){ 
