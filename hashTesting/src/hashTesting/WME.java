@@ -11,21 +11,22 @@ package hashTesting;
  */
 public class WME
 {
-     /* catagories for comparing two WMEs to each other */
+     /** catagories for comparing two WMEs to each other */
      public static final int ID = 1;    //compare IDs
      public static final int ATTR = 2;  //compare ATTRs
      public static final int VAL = 4;   //compare VALs
-
 
     /** specifies what components of two WMEs are compared when determining if
         they are equal (see {@link #equals}).*/
     public static final int COMPARE_TYPE = ATTR + VAL;
     
-    // instance variables - replace the example below with your own
+    /** instance variables - replace the example below with your own*/
     public String id;
     public String attribute;
     public String value;
 
+    
+    
     /**
      * Constructor for WME with no parameters.
      */
@@ -36,6 +37,8 @@ public class WME
         value = null;
     }
 
+    
+    
     /**
      * Constructor for WME with single string.
      */
@@ -46,6 +49,8 @@ public class WME
         parseWME(line);
     }//WME ctor
 
+    
+    
     /**
      * Constructor for WME with 3 parameters.
      */
@@ -77,6 +82,8 @@ public class WME
         
     }//ctor
 
+    
+    
     /**
      * parseWME
      *
@@ -135,6 +142,8 @@ public class WME
 
     }//parseWME
 
+    
+    
     /**
      * @return true if this WME contains valid data
      */
@@ -142,6 +151,8 @@ public class WME
     {
         return this.id != null;
     }
+    
+    
     
     /**
      * isID is a method that checks if a string is in the format of an ID, 
@@ -190,6 +201,8 @@ public class WME
         return false;
     }//isID
     
+    
+    
     /**
      * This overloaded version uses the value instance variable
      */
@@ -197,6 +210,8 @@ public class WME
     {
         return isID(this.value);
     }
+    
+    
     
     /**
      * isNum is a method that checks if a string is a number, without any extra 
@@ -220,23 +235,31 @@ public class WME
         return field.matches("[0-9]+");
     }
 
+    
+    
     /** @return human readable version of the WME */
     public String toString()
     {
         return "(" + id + " ^" + attribute + " " + value + ")";
     }//toString
-        
+
+    
+    
     /** @return human readable version of the attribute */
     public String getAttrib()
     {
         return this.attribute;
     }//getAttrib
     
+    
+    
     /** @return human readable version of the value */
     public String getVal()
     {
         return this.value;
     }//getVal
+    
+    
     
     /** @return true if given WME has the same attr and value as this */
     @Override
@@ -246,6 +269,8 @@ public class WME
             
     }//equals
 
+    
+    
     /**
      * compares the components of another WME and this one.
      * 

@@ -1,6 +1,5 @@
 package hashTesting;
 
-import java.util.Arrays;
 
 
 
@@ -11,10 +10,10 @@ import java.util.Arrays;
  * 
  * @author Alexandra Warlen
  * @author Allie Seibert
- * @version Tuesday May 27, 2014
+ * @version Tuesday June 5, 2014
  */
-
 public class SweetSpotHashFn extends HashFn{
+	
 	
 	/**list of all WMEs and their frequencies*/
 	protected Dictionary dictionary; 
@@ -83,58 +82,19 @@ public class SweetSpotHashFn extends HashFn{
 		
 		
 		int[] hashCode = new int[this.codeSize];
-		Entry entry;  //the current entry in the dictionary
-		
+
 		// generate the hashCode
 		for(int i = 0; i < super.codeSize; i++) {
-			entry = hashFormula[i];
-			
-			//if the hashFormula value is empty the bit is 0
-			if(entry == null){
-				hashCode[i]=0;
-			}
-			
-			//if the hashFormula value occurs in the episode in question
-			else{	
-				if(entry.occursIn(episodeIndex)) {
-					hashCode[i] = 1;
-				}
-				else{
-					hashCode[i] = 0;
-				}
-
-			}
+			if(generateOne(i))
+				hashCode[i] = 1;
+			else
+				hashCode[i] = 0;
 		}
 
 		episodeIndex++;
-
 		return hashCode;
 	}//hash
 	
-
-    /**
-     * generateHashFormula
-     */
-    private Entry[] generateHashFormula()
-    {
-		//find the magic number 
-		discardNumber = (int) (discardFraction *dictionary.getSize());
-
-        Entry[] newFormula = new Entry[this.codeSize];
-
-        for(int i = 0; i < this.codeSize; ++i) {    	
-        	if(i+discardNumber < dictionary.getSize()){
-        		newFormula[i] = dictionary.getEntryAt((i + discardNumber));
-        	}
-        	else{
-        		newFormula[i] = null;
-        	}
-        	
-        }
-        //Arrays.sort(newFormula);
-        return newFormula;
-
-    }//generateHashFormula
     
     
 	/**
@@ -142,7 +102,7 @@ public class SweetSpotHashFn extends HashFn{
 	 * 
 	 * designs the hash formula
 	 */
-	private void compileHashFormula() 
+	protected void compileHashFormula() 
 	{
 		//find the magic number 
 		discardNumber = (int) (discardFraction *dictionary.getSize()); 
@@ -191,12 +151,68 @@ public class SweetSpotHashFn extends HashFn{
 				while(inSweetSpot[i]){
 					i++;
 				}
-				hashFormula[i] = dictionary.getEntryAt(j+discardNumber);
+				if(hashFormula[i] == null || noResistance())
+					hashFormula[i] = dictionary.getEntryAt(j+discardNumber);
 				i++;
 			}
 		}
 		
 	}
+	
+
+	
+    /**
+     * generateHashFormula
+     */
+    protected Entry[] generateHashFormula()
+    {
+		//find the magic number 
+		discardNumber = (int) (discardFraction *dictionary.getSize());
+
+        Entry[] newFormula = new Entry[this.codeSize];
+
+        for(int i = 0; i < this.codeSize; ++i) {    	
+        	if(i+discardNumber < dictionary.getSize()){
+        		newFormula[i] = dictionary.getEntryAt((i + discardNumber));
+        	}
+        	else{
+        		newFormula[i] = null;
+        	}
+        	
+        }
+
+        return newFormula;
+
+    }//generateHashFormula	
+        	
+	
+    
+	/**
+	 * generateBit
+	 * 
+	 * @param int i - the index
+	 * @return boolean to return 1
+	 */
+	protected boolean generateOne(int i)
+	{
+		Entry entry = hashFormula[i];
+		return entry != null && entry.occursIn(episodeIndex);
+	}
+	
+	
+    
+    /**
+	 * noResistance
+	 * 
+	 * a filter for the resistanceSweetSpot subla
+	 * 
+	 */
+	protected boolean noResistance()
+	{
+		return true;
+	}//noResistance
+
+	
 	
 	/**
 	 * getDictionaryEntry
@@ -210,7 +226,9 @@ public class SweetSpotHashFn extends HashFn{
 				" " + this.dictionary.getEntryAt(index).getEntry().getVal();
 		
 		return ret;
-	}
+	}//getDictionaryEntry
+
+
 	
 	/**
 	 * getName
@@ -222,4 +240,6 @@ public class SweetSpotHashFn extends HashFn{
 		return ""+ (double)((int)(100*discardFraction))/100.0;
 	}//getName
 	
+
+
 }//class SweetSpotHashFn

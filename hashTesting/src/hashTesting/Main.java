@@ -33,8 +33,6 @@ public class Main
         hashFunctions = new ArrayList<HashFn>();
 
         hashCodeEpList = new ArrayList<Integer>();
-        //hashFunctions.add(new RandomHashFn(HashFn.CODE_SIZE)); 
-        //hashFunctions.add(new DummyHashFn(HashFn.CODE_SIZE));        
         
     }//ctor
     
@@ -162,11 +160,11 @@ public class Main
     {
     	
         //hashFunctions.add(new FoldingHashFn(codeSize));
-        for(double discardFraction = 0.0; discardFraction<=0.1; discardFraction+=0.01){	
-        		hashFunctions.add(new SweetSpotHashFn(codeSize,discardFraction));
+        for(double discardFraction = 0.0; discardFraction<=1.0; discardFraction+=0.1){	
+        		hashFunctions.add(new FoldingSweetSpotHashFn(codeSize, discardFraction));
         }
-        //hashFunctions.add(new GAHashFn(codeSize, this.episodeList, WME.ATTR + WME.VAL));
-        //hashFunctions.add(new LSHashFn(codeSize, 1));
+		hashFunctions.add(new FoldingHashFn(codeSize));
+
             	
     }//addHashFunctions
     
@@ -442,20 +440,22 @@ public class Main
         Main myself = new Main();
         
         //Step 1:  load the data from the file specified in input[0]
-        myself.loadEpisodes("data.txt");
+        myself.loadEpisodes("log_tanksoar_changesonly.txt");
         
         //Step 2:  Iterate over a range of hash code sizes
         for(int codeSize = 20; codeSize<= 200; codeSize+= 20){ 
         	System.out.println("\n\n\n\n\n\n\n\n\ntesting hash functions for hash code size: " + codeSize +"\n");
+        	//System.out.print(codeSize +"");
+        	
         	myself.hashFunctions = new ArrayList<HashFn>();
         	myself.addHashFunctions(codeSize);
 
 			// Step 3: Test each hash function and print the result
-			System.out.println("DiscardFraction\tUnique\tRecurring\tSimilar");
+			System.out.println("Discard Fraction\tUnique\tRecurring\tSimilar");
 
 			for (HashFn fn : myself.hashFunctions) {
 				double[] results = myself.calculateSuccess(fn);
-				System.out.println(fn.getName() + "\t" + results[0] + "\t" + results[1] + "\t" + results[2]);
+				System.out.println( fn.getName()+"\t" + results[0] + "\t" + results[1] + "\t" + results[2]);
 			}//for
         }//for
         

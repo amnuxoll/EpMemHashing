@@ -1,5 +1,6 @@
 package hashTesting;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 
@@ -16,25 +17,9 @@ import java.util.Arrays;
 
 public class FoldingSweetSpotHashFn extends SweetSpotHashFn{
 	
-	/**list of all WMEs and their frequencies*/
-	protected Dictionary dictionary; 
 	
 	/**the list of entries that is reflected by the bit values of the hashCode*/
-	protected Entry[] hashFormula; 	
-	
-	/** the current index of the current episode*/
-	protected int episodeIndex;	
-	
-	/** the parts of the wme that will be used for comparison*/
-	protected int compareType = WME.ATTR+WME.VAL; 
-	
-	/** the percentage of the sorted dictionary that is ignored*/
-	protected double discardFraction = 0.0; 	
-	
-	/**the number of elements in the dictionary that will be bypassed when 
-	 * compiling the hashFormula*/
-	protected int discardNumber;				
-	
+	protected ArrayList<Entry> hashFormulaArray; 	
 	
 	
 	/**
@@ -44,10 +29,7 @@ public class FoldingSweetSpotHashFn extends SweetSpotHashFn{
 	public FoldingSweetSpotHashFn(int size)
 	{
 		super(size);
-		this.episodeIndex = 0;
-		this.hashFormula = new Entry[this.codeSize];
-		this.dictionary = new Dictionary(this.compareType);
-		for(int i = 0; i < this.hashFormula.length; ++i) {hashFormula[i] = null;}
+		hashFormulaArray = new ArrayList<Entry>();
 	}//ctor
 	
 	
@@ -59,142 +41,55 @@ public class FoldingSweetSpotHashFn extends SweetSpotHashFn{
 	 */
 	public FoldingSweetSpotHashFn(int size, double discardFraction)
 	{
-		this(size);
-		if(discardFraction <= 1.0 && discardFraction >=0.0)
-			this.discardFraction = discardFraction;
+		super(size,discardFraction);
+		hashFormulaArray = new ArrayList<Entry>();
 	}//ctor
 
 	
 	
-	/**
-	 * hash
-	 * 
-	 * compiles a dictionary, determines the number of words (n) it should not use
-	 * creates a hash formula based off the words below the top n
-	 * 
-	 */
-	public int[] hash(WME[] episode)
+	@Override
+	protected boolean generateOne(int hashIndex)
 	{
-		//compile dictionary
-		dictionary.addEpisode(episodeIndex, episode);
+		for(int i=hashIndex; i<hashFormulaArray.size(); i+=this.codeSize){
 			
-		//create hashFormula
-		compileHashFormula();
-		
-		
-		int[] hashCode = new int[this.codeSize];
-		Entry entry;  //the current entry in the dictionary
-		
-		// generate the hashCode
-		for(int i = 0; i < super.codeSize; i++) {
-			entry = hashFormula[i];
-			
-			//if the hashFormula value is empty the bit is 0
-			if(entry == null){
-				hashCode[i]=0;
-			}
-			
-			//if the hashFormula value occurs in the episode in question
-			else{	
-				if(entry.occursIn(episodeIndex)) {
-					hashCode[i] = 1;
-				}
-				else{
-					hashCode[i] = 0;
-				}
-
-			}
+			if(hashFormulaArray.get(i).occursIn(this.episodeIndex))
+				return true;
 		}
-
-		episodeIndex++;
-
-		return hashCode;
-	}//hash
+		return false;
+	}
 	
 
-    /**
-     * generateHashFormula
-     */
-    protected Entry[] generateHashFormula()
-    {
-		//find the magic number 
-		discardNumber = (int) (discardFraction *dictionary.getSize());
-
-        Entry[] newFormula = new Entry[this.codeSize];
-
-        for(int i = 0; i < this.codeSize; ++i) {    	
-        	if(i+discardNumber < dictionary.getSize()){
-        		newFormula[i] = dictionary.getEntryAt((i + discardNumber));
-        	}
-        	else{
-        		newFormula[i] = null;
-        	}
-        	
-        }
-        return newFormula;
-
-    }//generateHashFormula
-    
     
 	/**
 	 * compileHashFormula
 	 * 
 	 * designs the hash formula
 	 */
+	@Override
 	protected void compileHashFormula() 
 	{
-		//find the magic number 
-		discardNumber = (int) (discardFraction *dictionary.getSize()); 
-		int j;
-		
-		//determine if hashFormula values are still in the sweetSpot range
-		
-		boolean[] inSweetSpot = new boolean[this.codeSize];  
-		boolean[] inHashFormula = new boolean[this.codeSize];
-		for(int i = 0; i < inHashFormula.length; ++i) {inHashFormula[i] = false;}
-	
 		Entry[] newHashFormula = generateHashFormula();
 		
-		/*for continuity i is the hashFormula index and j is the
-		oldHashFormula index for the next two  for loops*/	
+		ArrayList<Entry> temp = new ArrayList<Entry>();
+		Entry inHashFormulaArray=null; 
 		
-		//iterate through the old hashFormula to find matches in the newHashFormula		
-		for(int i = 0; i< this.codeSize; i++){
-			inSweetSpot[i] = false;
-			j=0;
-			
-			//iterate through newHashFormula for matches if hashFormula[i] is not null
-			while(j<this.codeSize && hashFormula[i] != null ){
-				
-				//check that the current value is not null
-				if(newHashFormula[j] != null){
-					WME entry1 = hashFormula[i].getEntry();
-					WME entry2 = newHashFormula[j].getEntry();
+		for(Entry newEntry: newHashFormula){						
+			inHashFormulaArray = newEntry;
+			for(Entry entry: hashFormulaArray){	
+				if(newEntry == null)
+					break;
+				else if(newEntry.equals(entry)){
+					inHashFormulaArray = null;
+					break;
+				}
 					
-					//if the two values are equal then mark the locations using the boolean values
-					if(entry1.equalsWithType(entry2, this.compareType)){
-						inSweetSpot[i] = true;
-						inHashFormula[j] = true;
-						//TODO Update hashFormula??
-						break;
-					}
-				}
-				j++;
 			}
-		}
-		
-		//replace hashFormula values with new sweetSpot values
-		int i = 0;
-		for(j = 0; j< this.codeSize &&  j+discardNumber<dictionary.getSize() ; j++){
-			if(!inHashFormula[j]){
-				while(inSweetSpot[i]){
-					i++;
-				}
-				hashFormula[i] = dictionary.getEntryAt(j+discardNumber);
-				i++;
-			}
-		}
-		
+			if(inHashFormulaArray != null)
+				temp.add(inHashFormulaArray);
+		}	
+		hashFormulaArray.addAll(temp);
+
+		temp.clear();
 	}
 
 	
@@ -206,7 +101,7 @@ public class FoldingSweetSpotHashFn extends SweetSpotHashFn{
 	 */
 	public String getName()
 	{
-		return ""+ (double)((int)(100*discardFraction))/100.0;
+		return "Folding "+super.getName();
 	}//getName
 	
 }//class FoldingSweetSpotHashFn
