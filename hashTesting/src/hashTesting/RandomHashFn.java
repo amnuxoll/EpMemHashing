@@ -9,6 +9,7 @@ import java.util.Random;
  * @author Nux
  * @author Alexandra Warlen
  * @author Allie Seibert
+ * 
  * @version Friday May 16, 2014
  */
 public class RandomHashFn extends HashFn
