@@ -5,6 +5,7 @@ package hashTesting;
  * Abstract class HashFn to be implemented in subclasses.  Will hash events into
  * a hashcode to later be stored in a hashcode list.
  * 
+ * 
  * @author Alexandra Warlen
  * @author Allie Seibert
  * @version Friday May 16, 2014
