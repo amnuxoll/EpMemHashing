@@ -160,10 +160,12 @@ public class Main
     {
     	
         //hashFunctions.add(new FoldingHashFn(codeSize));
-        for(double discardFraction = 0.0; discardFraction<=1.0; discardFraction+=0.1){	
-        		hashFunctions.add(new FoldingSweetSpotHashFn(codeSize, discardFraction));
+    	for(double discardFraction = 0.0; discardFraction<= 0.15; discardFraction+=0.03){	
+    		hashFunctions.add(new FoldingSweetSpotHashFn(codeSize, discardFraction));
+       		for (double modSize = 0.25; modSize <= 1.75; modSize += 0.25)
+       			hashFunctions.add(new ModularFSSHFn(codeSize, discardFraction, modSize));
         }
-		hashFunctions.add(new FoldingHashFn(codeSize));
+		//hashFunctions.add(new FoldingHashFn(codeSize));
 
             	
     }//addHashFunctions
@@ -443,20 +445,24 @@ public class Main
         myself.loadEpisodes("log_tanksoar_changesonly.txt");
         
         //Step 2:  Iterate over a range of hash code sizes
-        for(int codeSize = 20; codeSize<= 200; codeSize+= 20){ 
-        	System.out.println("\n\n\n\n\n\n\n\n\ntesting hash functions for hash code size: " + codeSize +"\n");
+        for(int codeSize = 30; codeSize<= 90; codeSize+= 30){ 
+        	System.out.println("testing hash functions for hash code size: " + codeSize +"\n");
         	//System.out.print(codeSize +"");
         	
         	myself.hashFunctions = new ArrayList<HashFn>();
         	myself.addHashFunctions(codeSize);
 
 			// Step 3: Test each hash function and print the result
-			System.out.println("Discard Fraction\tUnique\tRecurring\tSimilar");
+			System.out.println("Discard Fraction, Unique, Recurring, Similar");
 
 			for (HashFn fn : myself.hashFunctions) {
 				double[] results = myself.calculateSuccess(fn);
-				System.out.println( fn.getName()+"\t" + results[0] + "\t" + results[1] + "\t" + results[2]);
+				System.out.println( fn.getName()+", " + String.format("%.5f", results[0]) + ", " 
+				+ String.format("%.5f", results[1]) + ", " + String.format("%.5f", results[2]));
 			}//for
+			
+			
+			System.out.println("\n\n");
         }//for
         
 

@@ -237,7 +237,7 @@ public class SweetSpotHashFn extends HashFn{
 	 */
 	public String getName()
 	{
-		return ""+ (double)((int)(100*discardFraction))/100.0;
+		return "Sweet Spot "+ (double)((int)(100*discardFraction))/100.0;
 	}//getName
 	
 
