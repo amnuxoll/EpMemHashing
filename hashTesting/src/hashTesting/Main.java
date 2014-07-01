@@ -161,9 +161,9 @@ public class Main
     	
         //hashFunctions.add(new FoldingHashFn(codeSize));
     	for(double discardFraction = 0.0; discardFraction<= 0.15; discardFraction+=0.03){	
-    		hashFunctions.add(new FoldingSweetSpotHashFn(codeSize, discardFraction));
-       		for (double modSize = 0.25; modSize <= 1.75; modSize += 0.25)
-       			hashFunctions.add(new ModularFSSHFn(codeSize, discardFraction, modSize));
+//    		hashFunctions.add(new FoldingSweetSpotHashFn(codeSize, discardFraction));
+//       		for (double modSize = ; modSize <= 5; modSize += 1)
+       			hashFunctions.add(new ModularFSSHFn(codeSize, discardFraction, 10));
         }
 		//hashFunctions.add(new FoldingHashFn(codeSize));
 
@@ -444,20 +444,18 @@ public class Main
         //Step 1:  load the data from the file specified in input[0]
         myself.loadEpisodes("log_tanksoar_changesonly.txt");
         
+        
+        System.out.println("Discard Fraction, Unique, Recurring, Similar");
         //Step 2:  Iterate over a range of hash code sizes
-        for(int codeSize = 30; codeSize<= 90; codeSize+= 30){ 
-        	System.out.println("testing hash functions for hash code size: " + codeSize +"\n");
-        	//System.out.print(codeSize +"");
+        for(int codeSize = 30; codeSize<= 180; codeSize+= 30){ 
         	
         	myself.hashFunctions = new ArrayList<HashFn>();
         	myself.addHashFunctions(codeSize);
 
-			// Step 3: Test each hash function and print the result
-			System.out.println("Discard Fraction, Unique, Recurring, Similar");
-
+			// Step 3: Test each hash function and print the result			
 			for (HashFn fn : myself.hashFunctions) {
 				double[] results = myself.calculateSuccess(fn);
-				System.out.println( fn.getName()+", " + String.format("%.5f", results[0]) + ", " 
+				System.out.println(codeSize + ", " + fn.getName()+", " + String.format("%.5f", results[0]) + ", " 
 				+ String.format("%.5f", results[1]) + ", " + String.format("%.5f", results[2]));
 			}//for
 			
