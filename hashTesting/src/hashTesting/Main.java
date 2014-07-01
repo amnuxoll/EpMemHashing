@@ -458,9 +458,6 @@ public class Main
 				System.out.println(codeSize + ", " + fn.getName()+", " + String.format("%.5f", results[0]) + ", " 
 				+ String.format("%.5f", results[1]) + ", " + String.format("%.5f", results[2]));
 			}//for
-			
-			
-			System.out.println("\n\n");
         }//for
         
 
