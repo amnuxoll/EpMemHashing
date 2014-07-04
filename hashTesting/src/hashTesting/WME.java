@@ -265,11 +265,16 @@ public class WME
     @Override
     public boolean equals(Object otherObj)
     {
-       return equalsWithType(otherObj, WME.COMPARE_TYPE);
+    	return equalsWithType(otherObj, WME.COMPARE_TYPE);
             
     }//equals
-
     
+
+    @Override
+    public int hashCode()
+    {
+    	return this.toString().hashCode();
+    }
     
     /**
      * compares the components of another WME and this one.
@@ -303,7 +308,6 @@ public class WME
         return true;
             
     }//equals
-    
     
     
 }//class WME

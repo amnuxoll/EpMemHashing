@@ -101,6 +101,7 @@ public class Entry implements Comparable<Entry> {
 	 */
 	
 	public int getSumOccurrences()
+	
 	{
 		int sum = 0;
 		for(int[] digit: occurrences){

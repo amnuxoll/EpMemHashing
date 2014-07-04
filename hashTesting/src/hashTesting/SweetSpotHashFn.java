@@ -27,6 +27,7 @@ public class SweetSpotHashFn extends HashFn{
 	/** the parts of the wme that will be used for comparison*/
 	protected int compareType = WME.ATTR+WME.VAL; 
 	
+	
 	/** the percentage of the sorted dictionary that is ignored*/
 	protected double discardFraction = 0.0; 	
 	

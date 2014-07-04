@@ -70,7 +70,7 @@ public class DictionaryTest {
 		//create new episode
 		WME testWME = new WME("(s1 ^color red)");
         WME test2WME = new WME("(s1 ^color blue)");
-        WME test3WME = new WME("s1 ^yolo hashtagswag");
+        WME test3WME = new WME("(s1 ^yolo hashtagswag)");
         
         WME[] episode = new WME[3];
         episode[0] = testWME;

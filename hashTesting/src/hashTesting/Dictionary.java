@@ -25,6 +25,8 @@ public class Dictionary
 	//because random
 	Random rand = new Random();
 	
+	
+	
 	/**
 	 * This ctor is designed to be used by hash functions
 	 * 
@@ -99,13 +101,14 @@ public class Dictionary
 			
 			//if the word does not exist yet, add the word
 			if(wordLoc < 0){
-				dictionary.add(new Entry(compareType,entry));
-				wordLoc = dictionary.size() - 1;
+				Entry temp = new Entry(compareType,entry);
+				dictionary.add(temp);
+				temp.addOccurrence(episodeIndex);
 			}
-			
-			//increment the occurrences in that episode
-			dictionary.get(wordLoc).addOccurrence(episodeIndex);
-			
+			else{
+				//increment the occurrences in that episode
+				dictionary.get(wordLoc).addOccurrence(episodeIndex);
+			}
 		}
 		
 		Collections.sort(dictionary);
