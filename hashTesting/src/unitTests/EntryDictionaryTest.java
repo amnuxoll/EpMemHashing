@@ -58,7 +58,6 @@ public class EntryDictionaryTest {
      
         assertEquals(testDictAttr.findEntry(testWME).getEntry(), testWME);
         assertEquals(testDictAttr.findEntry(test2WME).getEntry(), test2WME);
-      //TODO: Failing at test3WME. Null Pointer Exception
         assertEquals(testDictAttr.findEntry(test3WME).getEntry(), test3WME);
 
 	}
@@ -79,10 +78,12 @@ public class EntryDictionaryTest {
 		assertEquals(testList2.get(0).getEntry().value, "eats");
 	} 
 	
-	//TODO: Have not tested getRandomEntry and findEntry
-	
+	/** get a random entry and make sure it's in the list */
 	@Test
-	public void testFindEntry(){
-		
+	public void testGetRandomEntry(){
+		EntryTwo entry = testDictAttrVal.getRandomEntry();
+		EntryTwo ret = testDictAttrVal.findEntry(entry.getEntry());
+		assertNotNull(ret);
 	}
+
 }

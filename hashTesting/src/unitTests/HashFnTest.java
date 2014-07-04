@@ -255,8 +255,8 @@ public class HashFnTest extends HashFn
 		
 		//it should still be below color red so the formula doesn't change too
 		//much. color red should be at the top
-		assertEquals(fn.getDictionaryEntry(0), "color red");
-		assertEquals(fn.getDictionaryEntry(2), "color green");
+		assertEquals(fn.getDictionaryEntry(0), "color green");
+		assertEquals(fn.getDictionaryEntry(2), "color red");
     }
     
     /**

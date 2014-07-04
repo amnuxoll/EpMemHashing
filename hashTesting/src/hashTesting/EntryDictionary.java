@@ -71,13 +71,14 @@ public class EntryDictionary
 	 * 
 	 * returns the location of the of a WME in the dictionary
 	 * 
-	 *. @param entry - the string translation of the word
-	 * @return - index of the word
+	 * @param wme - the key linked to a desired Entry
+	 *
+	 * @return - the desired entry or null if not found 
 	 */
-	public EntryTwo findEntry(WME entry)
+	public EntryTwo findEntry(WME wme)
 	{
 		//TODO: Not actually receiving an entry, not getting from dictionary
-		EntryTwo ret = dictionary.get(entry);
+		EntryTwo ret = dictionary.get(wme);
 		return ret;
 	}
 	
@@ -93,16 +94,16 @@ public class EntryDictionary
 	{
 		
 		//recurse through episodes
-		for(WME entry: episode){			
+		for(WME wme: episode){			
 
-			if(dictionary.containsKey(entry)){
-				dictionary.get(entry).addOccurrence(episodeIndex);
+			if(dictionary.containsKey(wme)){
+				dictionary.get(wme).addOccurrence(episodeIndex);
 			}
 			//if the word does not exist yet, add the word
 			else{
 				//increment the occurrences in that episode
-				EntryTwo e = new EntryTwo(compareType, entry);
-				dictionary.put(entry, e);
+				EntryTwo e = new EntryTwo(compareType, wme);
+				dictionary.put(wme, e);
 				e.addOccurrence(episodeIndex);
 			}
 		}
@@ -112,21 +113,24 @@ public class EntryDictionary
 	/**
 	 * getRandomEntry
 	 * 
+	 * CAVEAT:  This method is pretty expensive...
+	 * 
 	 * @return a randomly selected entry 
 	 */
 	
 	public EntryTwo getRandomEntry()
 	{
 		int index = rand.nextInt(dictionary.size());
-		EntryTwo[] temp = null;
+		EntryTwo[] temp = new EntryTwo[dictionary.size()];
 		dictionary.values().toArray(temp);
 		return temp[index];
 	}	
 	
+	/**
+	 * @return all the entries in this dictionary in sorted by frequency (primary key) and recency (secondary key) 
+	 */
 	public ArrayList<EntryTwo> getSortedEntryList(){
-		EntryTwo[] temp = new EntryTwo[dictionary.values().size()];
-		dictionary.values().toArray(temp);
-		ArrayList<EntryTwo> ret = new ArrayList<EntryTwo>(Arrays.asList(temp));
+		ArrayList<EntryTwo> ret = new ArrayList<EntryTwo>(dictionary.values());
 		Collections.sort(ret);
 		return ret;
 	}
