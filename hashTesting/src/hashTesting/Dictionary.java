@@ -18,12 +18,12 @@ public class Dictionary
 {
 	/* compareType specifies the parts of the WME to consider when comparing two
      * WMEs (@see WME#equals)*/
-	private int compareType;
+	protected int compareType;
 	
 	/* the dictionary catalogs the words that appear in the episodes with their
 	 * respective occurrences
 	 */
-	private Map<WME, Entry> dictionary;
+	protected Map<WME, Entry> dictionary;
 	
 	//because random
 	Random rand = new Random();
@@ -53,7 +53,7 @@ public class Dictionary
 	public Dictionary (ArrayList<WME[]> episodeList, int compareType)
 	{
 		this(compareType);
-
+		if(episodeList == null) return;
 		//adds the WME's to the dictionary by episode
 		for(int i = 0; i < episodeList.size(); i++){
 			addEpisode(i, episodeList.get(i));

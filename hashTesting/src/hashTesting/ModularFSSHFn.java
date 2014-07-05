@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class ModularFSSHFn extends FoldingSweetSpotHashFn {
 	
-	private double modSize = 1.0;
+	protected double modSize = 1.0;
 
 	public ModularFSSHFn(int size, double discardFraction, double modSize){
 		super(size, discardFraction);
