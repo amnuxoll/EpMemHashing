@@ -22,46 +22,21 @@ public class DictionaryTest {
 	
 	@Test
 	public void testCtor() {
+		Dictionary testDic1 = new Dictionary(WME.ATTR);
+		assertEquals(testDic1.getCompareType(), WME.ATTR);
 		
-		//Test the dictionary that compares only attributes
-		WME w = new WME("(S1 ^alligator eats)");
-		assertEquals(testDictAttr.getEntryAt(1).getEntry(), w);
-		assertEquals(testDictAttr.getEntryAt(1).getSumOccurrences(), 1);
-		assertEquals(testDictAttr.getEntryAt(0).getSumOccurrences(), 3);
-		
-		
-		//Test the dictionary that compares attribute value combinations		
+		Dictionary testDic2 = new Dictionary(MainTest.makeQuickEpList2(), WME.VAL);
+		assertEquals(testDic2.getCompareType(), WME.VAL);
 		WME testWME = new WME("(s1 ^color red)");
-        WME test2WME = new WME("(s1 ^color blue)");
-		assertEquals(testDictAttrVal.getEntryAt(3).getEntry(), w);
-		assertEquals(testDictAttrVal.getEntryAt(3).getSumOccurrences(), 1);
-		assertEquals(testDictAttrVal.getEntryAt(0).getEntry(), testWME);
-		assertEquals(testDictAttrVal.getEntryAt(1).getEntry(), test2WME);
-		
-		//Tests the origin of the location
-		int[] digit1 = {0, 2};
-		int[] digit2 = {1, 1};
-		ArrayList<int[]> dummyOccurrences = new ArrayList<int[]>();
-		dummyOccurrences.add(digit1);
-		dummyOccurrences.add(digit2);
-		
-		//compare each element to make sure they are equals
-		ArrayList<int[]> realOccurrences = testDictAttr.getEntryAt(0).getOccurrences();
-		for(int i = 0; i<realOccurrences.size(); i++){
-			for(int j=0; j<2; j++){
-				assertEquals(realOccurrences.get(i)[j], dummyOccurrences.get(i)[j]);
-			}
-		}
-		
-
+		WME test2WME = new WME("(s1 ^alligator eats)");
+		assertEquals(testDic2.findEntry(testWME).getWME(), testWME);
+		assertEquals(testDic2.findEntry(test2WME).getWME(), test2WME);
 	}
 	
 	@Test
-	public void testFindWordLoc()
-	{
-		WME w = new WME("(s2 ^color yellow)");
-		assertEquals(testDictAttr.findWordLoc(w), 0);
-		assertEquals(testDictAttrVal.findWordLoc(w), -1);
+	public void testGetSize(){
+		assertEquals(testDictAttr.getSize(), 4);
+		assertEquals(testDictAttrVal.getSize(), 4);
 	}
 	
 	@Test
@@ -77,12 +52,38 @@ public class DictionaryTest {
         episode[1] = test2WME;
         episode[2] = test3WME;
         
-        //this episode has two occurences of the color attribute so adding it to the testDictAttr
+        //this episode has two occurrences of the color attribute so adding it to the testDictAttr
         //will bump the number of occurrences of 'color' (at index 0) up to 5
         testDictAttr.addEpisode(2, episode);
-        assertEquals(testDictAttr.getEntryAt(0).getSumOccurrences(), 5);
-        
-	}
+     
+        assertEquals(testDictAttr.findEntry(testWME).getWME(), testWME);
+        assertEquals(testDictAttr.findEntry(test2WME).getWME(), test2WME);
+        assertEquals(testDictAttr.findEntry(test3WME).getWME(), test3WME);
 
+	}
+	
+	@Test
+	public void testGetSortedEntryList(){
+		WME testWME = new WME("(s1 ^alligator eats)");
+		WME[] episode = new WME[1];
+		episode[0] = testWME;
+		testDictAttr.addEpisode(3, episode);
+		testDictAttrVal.addEpisode(3, episode);
+		ArrayList<Entry> testList1 = new ArrayList<Entry>(testDictAttr.getSortedEntryList());
+		ArrayList<Entry> testList2 = testDictAttrVal.getSortedEntryList();
+		
+		assertEquals(testList1.get(testList1.size() - 1).getWME().attribute, "color");
+		assertEquals(testList2.get(testList2.size() - 1).getWME().attribute, "color");
+		assertEquals(testList2.get(0).getWME().attribute, "alligator");
+		assertEquals(testList2.get(0).getWME().value, "eats");
+	} 
+	
+	/** get a random entry and make sure it's in the list */
+	@Test
+	public void testGetRandomEntry(){
+		Entry entry = testDictAttrVal.getRandomEntry();
+		Entry ret = testDictAttrVal.findEntry(entry.getWME());
+		assertNotNull(ret);
+	}
 
 }

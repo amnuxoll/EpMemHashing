@@ -227,12 +227,12 @@ public class Main
     		//find the randomly selected WME
     		for(int i = 0; i < dict.getSize(); ++i) {
     			Entry entry = dict.getEntryAt(i);
-    			count += entry.getSumOccurrences();
+    			count += entry.getNumOccurrences();
     			
     			//Have we found it?
     			if (count > index)
     			{
-    				WME newWME = new WME(entry.getEntry().toString());
+    				WME newWME = new WME(entry.getWME().toString());
     				newEp[currPos] = newWME;
     				currPos++;
     				break;
@@ -270,7 +270,7 @@ public class Main
     	for(int i = 0; i < dict.getSize(); ++i)
     	{
     		Entry entry = dict.getEntryAt(i);
-    		sum += entry.getOccurrences().size();
+    		sum += entry.getNumOccurrences();
     	}
 
 

@@ -1,5 +1,8 @@
 package hashTesting;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 
 
 
@@ -33,7 +36,11 @@ public class SweetSpotHashFn extends HashFn{
 	
 	/**the number of elements in the dictionary that will be bypassed when 
 	 * compiling the hashFormula*/
-	protected int discardNumber;				
+	protected int discardNumber;
+	
+	protected final int ENTRY_FOUND = 1;
+	
+	protected final int ENTRY_NOT_FOUND = 0;
 	
 	
 	
@@ -85,11 +92,9 @@ public class SweetSpotHashFn extends HashFn{
 		int[] hashCode = new int[this.codeSize];
 
 		// generate the hashCode
+		//TODO: Fix
 		for(int i = 0; i < super.codeSize; i++) {
-			if(generateOne(i))
-				hashCode[i] = 1;
-			else
-				hashCode[i] = 0;
+			hashCode[i] = generateBit(i, episode);
 		}
 
 		episodeIndex++;
@@ -130,8 +135,8 @@ public class SweetSpotHashFn extends HashFn{
 				
 				//check that the current value is not null
 				if(newHashFormula[j] != null){
-					WME entry1 = hashFormula[i].getEntry();
-					WME entry2 = newHashFormula[j].getEntry();
+					WME entry1 = hashFormula[i].getWME();
+					WME entry2 = newHashFormula[j].getWME();
 					
 					//if the two values are equal then mark the locations using the boolean values
 					if(entry1.equalsWithType(entry2, this.compareType)){
@@ -194,10 +199,11 @@ public class SweetSpotHashFn extends HashFn{
 	 * @param int i - the index
 	 * @return boolean to return 1
 	 */
-	protected boolean generateOne(int i)
+	protected int generateBit(int i, WME[] episode)
 	{
 		Entry entry = hashFormula[i];
-		return entry != null && entry.occursIn(episodeIndex);
+		ArrayList<WME> ep = new ArrayList<WME>(Arrays.asList(episode));
+		return (entry != null && ep.contains(entry.getWME())) ? ENTRY_FOUND : ENTRY_NOT_FOUND;
 	}
 	
 	
@@ -223,8 +229,8 @@ public class SweetSpotHashFn extends HashFn{
 	 */
 	public String getDictionaryEntry(int index)
 	{
-		String ret = this.dictionary.getEntryAt(index).getEntry().getAttrib() +
-				" " + this.dictionary.getEntryAt(index).getEntry().getVal();
+		String ret = this.dictionary.getEntryAt(index).getWME().getAttrib() +
+				" " + this.dictionary.getEntryAt(index).getWME().getVal();
 		
 		return ret;
 	}//getDictionaryEntry

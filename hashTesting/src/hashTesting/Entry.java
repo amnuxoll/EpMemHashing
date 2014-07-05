@@ -1,31 +1,31 @@
 package hashTesting;
 
-import java.util.ArrayList;
-
 /**
- * Tracks all occurances of a particular WME that has appeared in at least one
- * episode.  In particular, tracks how many times it has appeared in a given
- * episode and also how many times in any episode.
+ * Tracks most recent occurrence of a particular WME that has appeared in at least one
+ * episode.  Tracks how many times it has appeared in all visited episodes.
  * 
- * @author Alexandra Warlen
- * @author Allie Seibert
- * @version May 2014
+ * @author Andrew Meyer
+ * @author Kevin Bastien
+ * @version July 2014
  */
 public class Entry implements Comparable<Entry> {
 
 	/** the word in question*/
-	protected WME entry;
-	
-	/** an occurrence of WME is represented by an array of int[2] such that:
-	 * digit[0] - the episode where it occured
-	 * digit[1] - num of occurrences in the episode specified by digit[0]
-	 */
-	protected ArrayList<int[]> occurrences;
-	
+	protected WME wme;
 	
 	/** compareType specifies the parts of the WME to consider when comparing two
      * WMEs (@see WME#equals)*/
 	protected int compareType;
+	
+	/**
+	 * numOccurrences determines the frequency of a given WME
+	 */
+	private int numOccurrences = 0;
+	
+	/**
+	 * mostRecentEpisode determines the most recent episode that occurs 
+	 */
+	private int mostRecentEpisode = -1;
 	
 	/**
 	 * ctor
@@ -33,11 +33,11 @@ public class Entry implements Comparable<Entry> {
 	 * @param comparetype
 	 * @param entry
 	 */
-	public Entry(int compareType, WME entry)
+	public Entry(int compareType, WME wme)
 	{
 		this.compareType = compareType;
-		this.entry = entry;
-		this.occurrences = new ArrayList<int[]>();
+		this.wme = wme;
+
 	}
 	
 	/**
@@ -49,19 +49,8 @@ public class Entry implements Comparable<Entry> {
 	 */
 	public void addOccurrence(int episodeIndex)
 	{
-		for(int[] digit: occurrences){
-			//if this is the episode we want to increment, do so and exit
-			if (digit[0] == episodeIndex)
-			{
-				digit[1]++;
-				return;
-			}
-		}
-		
-		//if no occurrences have been found for this episode, add a new digit
-		int[] newOccurrence = {episodeIndex, 1}; 
-		occurrences.add(newOccurrence);
-		
+		numOccurrences+=1;
+		mostRecentEpisode = (episodeIndex >= mostRecentEpisode) ? episodeIndex : mostRecentEpisode;
 	}
 	
 	/**
@@ -75,66 +64,49 @@ public class Entry implements Comparable<Entry> {
 	
 	/**
 	 * allows public access to occurrences.
-	 * @return  occurrences of type ArrayList<int[]> 
+	 * @return  mostRecentEpisode of type int
 	 */
-	public ArrayList<int[]> getOccurrences()
+	public int getMostRecentOccurrence()
 	{
-		return this.occurrences;
+		return this.mostRecentEpisode;
 	}
 	
 	/**
 	 * allows public access to entry variable.
 	 * @return WME entry
 	 */
-	public WME getEntry()
+	public WME getWME()
 	{
-		return this.entry;
+		return this.wme;
 	}
 	
 	/**
-	 * getSumOccurences
+	 * getNumOccurrences
 	 * 
-	 * returns the total number of occurrences of the specified word
-	 * 
+	 * returns the total number of occurrences of the specified WME
 	 * 
 	 * @return sum
 	 */
-	
-	public int getSumOccurrences()
-	
-	{
-		int sum = 0;
-		for(int[] digit: occurrences){
-			sum+= digit[1];
-		}
-		
-		return sum;
+	public int getNumOccurrences()
+	{		
+		return this.numOccurrences;
 	}
 
-	/** compares two entries based upon their total number of occurrences */ 
+	/** compares two entries based upon their total number of occurrences and their most recent occurrence*/ 
 	@Override
 	public int compareTo(Entry otherEntry)
 	{
-		int myOccur = this.getSumOccurrences();
-		int otherOccur = otherEntry.getSumOccurrences();
-		
+		int myOccur = this.getNumOccurrences();
+		int otherOccur = otherEntry.getNumOccurrences();
+		if((otherOccur - myOccur) == 0){
+			return otherEntry.getMostRecentOccurrence() - this.getMostRecentOccurrence(); 
+		}
 		return otherOccur - myOccur;
 	}
 	
-	//TODO header
-	public boolean occursIn (int episodeIndex)
-	{
-		for (int[] digit: occurrences){
-			if(digit[0] == episodeIndex){
-				return true;
-			}
-		}
-		return false;
+	public String toString(){
+		return ("Entry: " + this.wme.toString() + ", Compare Type: " + this.compareType +
+				", NumOccurences: " + this.numOccurrences + ", Episode: " + this.mostRecentEpisode);
 	}
 	
-	
-	
-	
-
-	
-}//class Entry
+}//class EntryTwo

@@ -16,7 +16,7 @@ public class EntryTest extends MainTest {
      *
      */
     @Test
-    public void testEntryConst()
+    public void testEntryTwoConst()
     {
     	// Create a test episodeList and check the value of the first WME
     	// in the first episode.
@@ -28,7 +28,7 @@ public class EntryTest extends MainTest {
     	
     	// check that its variables were properly set
     	assertEquals(testCtor.getCompType(), 3);
-    	assertEquals(testCtor.getEntry().value, "blue");
+    	assertEquals(testCtor.getWME().value, "blue");
     	
 	}
     
@@ -44,28 +44,25 @@ public class EntryTest extends MainTest {
     	
     	// Add some occurrences
     	testEntry.addOccurrence(1);
+    	assertEquals(testEntry.getMostRecentOccurrence(), 1);
+    	assertEquals(testEntry.getNumOccurrences(), 1);
+    	
     	testEntry.addOccurrence(2);
     	testEntry.addOccurrence(2);
     	testEntry.addOccurrence(2);
+    	assertEquals(testEntry.getMostRecentOccurrence(), 2);
+    	assertEquals(testEntry.getNumOccurrences(), 4);
+    	
     	testEntry.addOccurrence(5);
+    	assertEquals(testEntry.getMostRecentOccurrence(), 5);
+    	assertEquals(testEntry.getNumOccurrences(), 5);
+    	
     	testEntry.addOccurrence(7);
     	testEntry.addOccurrence(7);
+    	assertEquals(testEntry.getMostRecentOccurrence(), 7);
+    	assertEquals(testEntry.getNumOccurrences(), 7);
     	
-    	// check that they were added properly
-    	// should be seen once in episode 1, three times in episode 2
-    	// once in ep 5 and twice in ep 7.
     	
-    	// first array of ints in ArrayList should be 1,1
-    	assertEquals(testEntry.getOccurrences().get(0)[0], 1);
-    	assertEquals(testEntry.getOccurrences().get(0)[1], 1);
-    	
-    	// second entry should be 2,3
-    	assertEquals(testEntry.getOccurrences().get(1)[0], 2);
-    	assertEquals(testEntry.getOccurrences().get(1)[1], 3);
-    	
-    	// last entry (index 3) should be 7,2
-    	assertEquals(testEntry.getOccurrences().get(3)[0], 7);
-    	assertEquals(testEntry.getOccurrences().get(3)[1], 2);
     }
     
     /**
@@ -73,7 +70,7 @@ public class EntryTest extends MainTest {
      *
      */
     @Test
-    public void testGetSumOccur()
+    public void testGetNumOccur()
     {
     	ArrayList<WME[]> testList = makeQuickEpList2();
     	Entry testEntry = new Entry(3, testList.get(0)[1]);
@@ -87,12 +84,12 @@ public class EntryTest extends MainTest {
     	testEntry.addOccurrence(7);
     	testEntry.addOccurrence(7);
     	
-    	assertEquals(testEntry.getSumOccurrences(), 7);
+    	assertEquals(testEntry.getNumOccurrences(), 7);
     	
     	// Add one more and retry
     	testEntry.addOccurrence(10);
     	
-    	assertEquals(testEntry.getSumOccurrences(), 8);
+    	assertEquals(testEntry.getNumOccurrences(), 8);
     }
     
     /**
@@ -124,8 +121,8 @@ public class EntryTest extends MainTest {
     	// make them equal and try again
     	entry2.addOccurrence(8);
     	
-    	assertEquals(entry1.compareTo(entry2), 0);
-    	assertEquals(entry2.compareTo(entry1), 0);
+    	assertEquals(entry1.compareTo(entry2), 5);
+    	assertEquals(entry2.compareTo(entry1), -5);
     }
 }
 

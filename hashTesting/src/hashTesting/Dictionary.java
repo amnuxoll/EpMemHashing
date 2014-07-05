@@ -1,15 +1,18 @@
 package hashTesting;
 
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Collections;
 import java.util.Random;
+import java.util.ArrayList;
 
 /**
  * A collection of WMEs and how often each have appeared
  * 
- * @author Alexandra Warlen
- * @author Allie Seibert
- * @version May 2014
+ * @author Andrew Meyer
+ * @author Kevin Bastien
+ * @version 6/29/2014
  */
 public class Dictionary
 {
@@ -20,7 +23,7 @@ public class Dictionary
 	/* the dictionary catalogs the words that appear in the episodes with their
 	 * respective occurrences
 	 */
-	private ArrayList<Entry> dictionary;
+	private Map<WME, Entry> dictionary;
 	
 	//because random
 	Random rand = new Random();
@@ -35,7 +38,7 @@ public class Dictionary
 	
 	public Dictionary (int compareType)
 	{
-		this.dictionary = new ArrayList<Entry>();
+		this.dictionary = new HashMap<WME, Entry>();
 		this.compareType = compareType;
 		
 	}//ctor
@@ -68,18 +71,20 @@ public class Dictionary
 	 * 
 	 * returns the location of the of a WME in the dictionary
 	 * 
-	 * @param entry - the string translation of the word
-	 * @return - index of the word
+	 * @param wme - the key linked to a desired Entry
+	 *
+	 * @return - the desired entry or null if not found 
 	 */
-	public int findWordLoc(WME entry)
+	public Entry findEntry(WME wme)
 	{
-		for(int i=0; i<dictionary.size(); i++){
-			if(entry.equalsWithType(dictionary.get(i).entry, this.compareType)){
-				return i;
-			}
-		}
-		
-		return -1;
+		Entry ret = dictionary.get(wme);
+		return ret;
+	}
+	
+	
+	public Entry getEntryAt(int index){
+		ArrayList<Entry> list = getSortedEntryList();
+		return list.get(index);
 	}
 	
 	/**
@@ -92,54 +97,54 @@ public class Dictionary
 	 */
 	public void addEpisode(int episodeIndex, WME[] episode)
 	{
-		int wordLoc;
 		
 		//recurse through episodes
-		for(WME entry: episode){
-			
-			wordLoc = findWordLoc(entry);
-			
-			//if the word does not exist yet, add the word
-			if(wordLoc < 0){
-				Entry temp = new Entry(compareType,entry);
-				dictionary.add(temp);
-				temp.addOccurrence(episodeIndex);
+		for(WME wme: episode){			
+
+			if(dictionary.containsKey(wme)){
+				dictionary.get(wme).addOccurrence(episodeIndex);
 			}
+			//if the word does not exist yet, add the word
 			else{
 				//increment the occurrences in that episode
-				dictionary.get(wordLoc).addOccurrence(episodeIndex);
+				Entry e = new Entry(compareType, wme);
+				dictionary.put(wme, e);
+				e.addOccurrence(episodeIndex);
 			}
 		}
-		
-		Collections.sort(dictionary);
 	}//addEpisode
-	
-	/**
-	 * getEntryAt
-	 * 
-	 * returns the nth most frequently occurring word
-	 * 
-	 * @param n
-	 * @return
-	 */
-	
-	public Entry getEntryAt(int n)
-	{
-		return dictionary.get(n);
-	}
+
 	
 	/**
 	 * getRandomEntry
+	 * 
+	 * CAVEAT:  This method is pretty expensive...
 	 * 
 	 * @return a randomly selected entry 
 	 */
 	
 	public Entry getRandomEntry()
 	{
-		int index = rand.nextInt(this.getSize());
-		return dictionary.get(index);
+		int index = rand.nextInt(dictionary.size());
+		Entry[] temp = new Entry[dictionary.size()];
+		dictionary.values().toArray(temp);
+		return temp[index];
 	}	
+	
+	/**
+	 * @return all the entries in this dictionary in sorted by frequency (primary key) and recency (secondary key) 
+	 */
+	public ArrayList<Entry> getSortedEntryList(){
+		ArrayList<Entry> ret = new ArrayList<Entry>(dictionary.values());
+		Collections.sort(ret);
+		return ret;
+	}
+
+	public int getCompareType(){
+		return this.compareType;
+	}
 	
 }
 	
+
 

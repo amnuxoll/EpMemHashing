@@ -88,7 +88,7 @@ public class GAHashFn extends DummyHashFn {
     	//mutate?
     	if (rand.nextInt(MUTATE) < MUTATE) {
     		int index = rand.nextInt(this.codeSize);
-    		newHasher[index] = dict.getRandomEntry().getEntry();
+    		newHasher[index] = dict.getRandomEntry().getWME();
     	}
     	
     	return newHasher;
@@ -200,7 +200,7 @@ public class GAHashFn extends DummyHashFn {
     	this.population = new WME[POPSIZE][this.codeSize];
     	for(int i = 0; i < POPSIZE; ++i) {
     		for(int j = 0; j < this.codeSize; ++j) {
-    			this.population[i][j] = dict.getRandomEntry().getEntry();
+    			this.population[i][j] = dict.getRandomEntry().getWME();
     		}
     	}
     }
@@ -226,7 +226,7 @@ public class GAHashFn extends DummyHashFn {
 			Entry entry = dict.getEntryAt(i);
 			int digit = 0;
 			for(int j = 0; j < this.bestHasher.length; ++j) {
-				if (bestHasher[j].equals(entry.getEntry())) {
+				if (bestHasher[j].equals(entry.getWME())) {
 					digit = 1;
 					break;
 				}

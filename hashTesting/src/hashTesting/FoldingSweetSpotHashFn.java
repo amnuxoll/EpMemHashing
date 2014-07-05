@@ -48,14 +48,16 @@ public class FoldingSweetSpotHashFn extends SweetSpotHashFn{
 	
 	
 	@Override
-	protected boolean generateOne(int hashIndex)
+	protected int generateBit(int hashIndex, WME[] episode)
 	{
+		ArrayList<WME> ep = new ArrayList<WME>(Arrays.asList(episode));
+		Entry e = null;
 		for(int i=hashIndex; i<hashFormulaArray.size(); i+=this.codeSize){
-			
-			if(hashFormulaArray.get(i).occursIn(this.episodeIndex))
-				return true;
+			e = hashFormulaArray.get(i);
+			if(e != null && ep.contains(hashFormulaArray.get(i).getWME()))
+				return ENTRY_FOUND;
 		}
-		return false;
+		return ENTRY_NOT_FOUND;
 	}
 	
 
