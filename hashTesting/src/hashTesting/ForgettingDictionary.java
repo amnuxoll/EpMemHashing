@@ -5,10 +5,15 @@ import java.util.Arrays;
 
 public class ForgettingDictionary extends Dictionary {
 
-	int dictSizeCap = 10000;
+	int dictSizeCap = 0; //means unlimited size
 	
 	public ForgettingDictionary(int compareType) {
 		super(compareType);
+	}
+	
+	public ForgettingDictionary(int compareType, int forgettingSize) {
+		super(compareType);
+		this.dictSizeCap = forgettingSize;
 	}
 
 	public ForgettingDictionary(ArrayList<WME[]> episodeList, int compareType){
@@ -17,14 +22,16 @@ public class ForgettingDictionary extends Dictionary {
 	
 	public ForgettingDictionary(ArrayList<WME[]> episodeList, int compareType, int forgettingSize){
 		super(episodeList, compareType);
-		dictSizeCap = forgettingSize;
+		this.dictSizeCap = forgettingSize;
 	}
 	
 	public void addEpisode(int episodeIndex, WME[] episode){
 		ArrayList<WME> newWMEs = checkEpisode(episode);
-		if((dictionary.size() + newWMEs.size()) > dictSizeCap){
-			cleanAndAdd(newWMEs, episodeIndex);
-		}
+		cleanAndAdd(newWMEs, episodeIndex);
+	}
+	
+	public int getCapSize(){
+		return this.dictSizeCap;
 	}
 
 	
@@ -38,7 +45,7 @@ public class ForgettingDictionary extends Dictionary {
 		ArrayList<WME> undiscoveredWMEs = new ArrayList<WME>();
 		for(WME wme: episode){
 			
-			if(dictionary.containsKey(wme)){
+			if(!dictionary.containsKey(wme)){
 				undiscoveredWMEs.add(wme);
 			}
 		}
@@ -53,12 +60,17 @@ public class ForgettingDictionary extends Dictionary {
 	 * @return new list of WMEs to be added to the dictionary
 	 */
 	private void cleanAndAdd(ArrayList<WME> newWMEs, int episodeIndex) {
+		//Add new entries to the dictionary.
 		for(WME wme: newWMEs){			
 			//increment the occurrences in that episode
 			Entry e = new Entry(compareType, wme);
 			dictionary.put(wme, e);
 			e.addOccurrence(episodeIndex);
 		}
+		
+		if (this.dictSizeCap == 0) return;
+		
+		//Remove extra entries from the dictionary.
 		ArrayList<Entry> sortedList = this.getSortedEntryList();
 		Entry entryToRemove = null;
 		while(sortedList.size() > dictSizeCap){

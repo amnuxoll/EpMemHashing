@@ -85,5 +85,27 @@ public class DictionaryTest {
 		Entry ret = testDictAttrVal.findEntry(entry.getWME());
 		assertNotNull(ret);
 	}
+	
+	/** make sure that the dictionary does not go above the size limit */
+	@Test
+	public void testForgetting(){
+		ForgettingDictionary fdAttr = new ForgettingDictionary(MainTest.makeQuickEpList2(), WME.ATTR, 5);
+		assertEquals(fdAttr.getCapSize(), 5);
+		assertEquals(fdAttr.getSize(), 4);
+		
+		//create new episode
+				WME testWME = new WME("(s1 ^color red)");
+		        WME test2WME = new WME("(s1 ^color orange)");
+		        WME test3WME = new WME("(s1 ^yolo hashtagswag)");
+		        
+		        WME[] episode = new WME[3];
+		        episode[0] = testWME;
+		        episode[1] = test2WME;
+		        episode[2] = test3WME;
+		        
+		fdAttr.addEpisode(3, episode);
+		
+		assertEquals(fdAttr.getSize(), 5);		
+	}
 
 }

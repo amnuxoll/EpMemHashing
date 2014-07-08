@@ -62,7 +62,7 @@ public class Dictionary
 	}//ctor
 	
 	public int getSize(){
-		return dictionary.size();
+		return this.dictionary.size();
 	}
 
 	
@@ -77,7 +77,7 @@ public class Dictionary
 	 */
 	public Entry findEntry(WME wme)
 	{
-		Entry ret = dictionary.get(wme);
+		Entry ret = this.dictionary.get(wme);
 		return ret;
 	}
 	
@@ -101,14 +101,14 @@ public class Dictionary
 		//recurse through episodes
 		for(WME wme: episode){			
 
-			if(dictionary.containsKey(wme)){
-				dictionary.get(wme).addOccurrence(episodeIndex);
+			if(this.dictionary.containsKey(wme)){
+				this.dictionary.get(wme).addOccurrence(episodeIndex);
 			}
 			//if the word does not exist yet, add the word
 			else{
 				//increment the occurrences in that episode
-				Entry e = new Entry(compareType, wme);
-				dictionary.put(wme, e);
+				Entry e = new Entry(this.compareType, wme);
+				this.dictionary.put(wme, e);
 				e.addOccurrence(episodeIndex);
 			}
 		}
@@ -125,9 +125,9 @@ public class Dictionary
 	
 	public Entry getRandomEntry()
 	{
-		int index = rand.nextInt(dictionary.size());
-		Entry[] temp = new Entry[dictionary.size()];
-		dictionary.values().toArray(temp);
+		int index = rand.nextInt(this.dictionary.size());
+		Entry[] temp = new Entry[this.dictionary.size()];
+		this.dictionary.values().toArray(temp);
 		return temp[index];
 	}	
 	
@@ -135,7 +135,7 @@ public class Dictionary
 	 * @return all the entries in this dictionary in sorted by frequency (primary key) and recency (secondary key) 
 	 */
 	public ArrayList<Entry> getSortedEntryList(){
-		ArrayList<Entry> ret = new ArrayList<Entry>(dictionary.values());
+		ArrayList<Entry> ret = new ArrayList<Entry>(this.dictionary.values());
 		Collections.sort(ret);
 		return ret;
 	}
