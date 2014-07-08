@@ -33,5 +33,9 @@ public class DynamicSSFn extends ModularFSSHFn {
 
     }//generateHashFormula	
 	
+	public String toString(){
+		return "Dynamic" + super.toString();
+	}
+	
 
 }
