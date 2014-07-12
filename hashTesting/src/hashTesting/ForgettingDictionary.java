@@ -28,6 +28,8 @@ public class ForgettingDictionary extends Dictionary {
 	public void addEpisode(int episodeIndex, WME[] episode){
 		ArrayList<WME> newWMEs = checkEpisode(episode);
 		cleanAndAdd(newWMEs, episodeIndex);
+		
+		this.sortedEntries = this.getSortedEntryList();
 	}
 	
 	public int getCapSize(){

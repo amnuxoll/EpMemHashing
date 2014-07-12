@@ -25,6 +25,8 @@ public class Dictionary
 	 */
 	protected Map<WME, Entry> dictionary;
 	
+	protected ArrayList<Entry> sortedEntries;
+	
 	//because random
 	Random rand = new Random();
 	
@@ -40,6 +42,7 @@ public class Dictionary
 	{
 		this.dictionary = new HashMap<WME, Entry>();
 		this.compareType = compareType;
+		this.sortedEntries = new ArrayList<Entry>();
 		
 	}//ctor
 
@@ -62,7 +65,8 @@ public class Dictionary
 	}//ctor
 	
 	public int getSize(){
-		return this.dictionary.size();
+		int ret = this.dictionary.size();
+		return ret;
 	}
 
 	
@@ -77,14 +81,12 @@ public class Dictionary
 	 */
 	public Entry findEntry(WME wme)
 	{
-		Entry ret = this.dictionary.get(wme);
-		return ret;
+		return this.dictionary.get(wme);
 	}
 	
 	
-	public Entry getEntryAt(int index){
-		ArrayList<Entry> list = getSortedEntryList();
-		return list.get(index);
+	public Entry getEntryAt(int index){ 
+		return sortedEntries.get(index);
 	}
 	
 	/**
@@ -112,6 +114,8 @@ public class Dictionary
 				e.addOccurrence(episodeIndex);
 			}
 		}
+		
+		this.sortedEntries = this.getSortedEntryList();
 	}//addEpisode
 
 	

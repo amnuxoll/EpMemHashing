@@ -53,7 +53,7 @@ public class SweetSpotHashFn extends HashFn{
 		super(size);
 		this.episodeIndex = 0;
 		this.hashFormula = new Entry[this.codeSize];
-		this.dictionary = new Dictionary(this.compareType);
+		this.dictionary = new ForgettingDictionary(this.compareType, 10000);
 		for(int i = 0; i < this.hashFormula.length; ++i) {hashFormula[i] = null;}
 	}//ctor
 	

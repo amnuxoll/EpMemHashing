@@ -17,6 +17,9 @@ public class DynamicSSFn extends ModularFSSHFn {
 		discardNumber = (int) (discardFraction * dictionary.getSize());
 
 		int sweetSpotSize = (int) (dictionary.getSize() * this.modSize);
+		
+		if (sweetSpotSize < 1) sweetSpotSize = 1;
+			
         Entry[] newFormula = new Entry[sweetSpotSize];
 
         for(int i = 0; i < sweetSpotSize; ++i) {    	
@@ -33,8 +36,8 @@ public class DynamicSSFn extends ModularFSSHFn {
 
     }//generateHashFormula	
 	
-	public String toString(){
-		return "Dynamic" + super.toString();
+	public String getName(){
+		return "Dynamic " + super.getName();
 	}
 	
 
