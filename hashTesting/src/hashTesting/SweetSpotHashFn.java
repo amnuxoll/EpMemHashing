@@ -2,6 +2,8 @@ package hashTesting;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.io.FileWriter;
+import java.io.IOException;
 
 
 
@@ -41,6 +43,8 @@ public class SweetSpotHashFn extends HashFn{
 	protected final int ENTRY_FOUND = 1;
 	
 	protected final int ENTRY_NOT_FOUND = 0;
+	
+	protected int episodeCompletedCount = 0;
 	
 	
 	
@@ -84,6 +88,35 @@ public class SweetSpotHashFn extends HashFn{
 	{
 		//compile dictionary
 		dictionary.addEpisode(episodeIndex, episode);
+		
+//		episodeCompletedCount++;
+//		
+//		if (episodeCompletedCount == 30){
+//			//print out dictionary to file
+//			FileWriter outputStream = null;
+//        	
+//        	try {
+//        		outputStream = new FileWriter("C:\\Users\\meyer14\\Desktop\\Research\\Raw Data\\SweetSpotDictOutput.txt");
+//        		ArrayList<Entry> dict = dictionary.getSortedEntryList();
+//        		for(Entry entry : dict){
+//        			outputStream.write(entry.getWME().toString());
+//        			outputStream.write("\n");
+//        		}
+//        	} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//        	finally {
+//        		if (outputStream != null){
+//        			try {
+//						outputStream.close();
+//					} catch (IOException e) {
+//						// TODO Auto-generated catch block
+//						e.printStackTrace();
+//					}
+//        		}
+//        	}
+//		}
 			
 		//create hashFormula
 		compileHashFormula();
@@ -234,8 +267,26 @@ public class SweetSpotHashFn extends HashFn{
 		
 		return ret;
 	}//getDictionaryEntry
-
-
+	
+	/**
+	 * setDictionary
+	 * 
+	 * @param d The dictionary that the function will use.
+	 */
+	
+	public void setDictionary(Dictionary d){
+		this.dictionary = d;
+	}
+	
+	/**
+	 * getCompareType
+	 * 
+	 * @return the compareType of this function
+	 *         represented as an integer
+	 */
+	public int getCompareType(){
+		return this.compareType;
+	}
 	
 	/**
 	 * getName
@@ -244,7 +295,11 @@ public class SweetSpotHashFn extends HashFn{
 	 */
 	public String getName()
 	{
+		if (! (dictionary instanceof ForgettingDictionary))
 		return "Sweet Spot "+ (double)((int)(100*discardFraction))/100.0;
+		
+		return "Sweet Spot " + (double)((int)(100*discardFraction))/100.0 + " Forget: " + 
+				((ForgettingDictionary)dictionary).getCapSize();
 	}//getName
 	
 

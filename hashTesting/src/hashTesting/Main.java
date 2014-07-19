@@ -158,15 +158,33 @@ public class Main
      */
     public void addHashFunctions(int codeSize)
     {
+    	
     	hashFunctions.add(new ModularFSSHFn(codeSize, 0.06, 0.25));
     	hashFunctions.add(new ModularFSSHFn(codeSize, 0.06, 1));
-    	hashFunctions.add(new ModularFSSHFn(codeSize, 0.06, 1.75));
-    	hashFunctions.add(new ModularFSSHFn(codeSize, 0.06, 5));
+    	hashFunctions.add(new ModularFSSHFn(codeSize, 0.06, 500));
     	
     	hashFunctions.add(new DynamicSSFn(codeSize, 0.06, 0.25));
     	hashFunctions.add(new DynamicSSFn(codeSize, 0.06, 0.5));
-    	hashFunctions.add(new DynamicSSFn(codeSize, 0.06, 0.75));
-    	hashFunctions.add(new DynamicSSFn(codeSize, 0.06, 1));            	
+    	hashFunctions.add(new DynamicSSFn(codeSize, 0.06, 1.0));
+    	
+    	
+    	
+//    	HashFn mod; 
+//    	HashFn dynamic;
+//    	
+//    	Dictionary dict;
+//    	for (int i = 3; i <= 9; i = i + 3){
+//    		mod = new ModularFSSHFn(codeSize, 0.06, 1.75);
+//    		dict = new ForgettingDictionary(((SweetSpotHashFn)mod).getCompareType(), i * 1000);
+//    		((SweetSpotHashFn)mod).setDictionary(dict);
+//	    	hashFunctions.add(mod);
+//	    	
+//	    	dynamic = new DynamicSSFn(codeSize, 0.06, 0.75);
+//	    	dict = new ForgettingDictionary(((SweetSpotHashFn)dynamic).getCompareType(), i * 1000);
+//    		((SweetSpotHashFn)dynamic).setDictionary(dict);
+//	    	hashFunctions.add(dynamic);
+//    	}//for
+            	
     }//addHashFunctions
     
     /**
@@ -445,19 +463,41 @@ public class Main
         
         
         System.out.println("CodeSize, Name, Unique, Recurring, Similar");
+        
+        long tStart = System.nanoTime();
+        
         //Step 2:  Iterate over a range of hash code sizes
-        for(int codeSize = 50; codeSize<= 100; codeSize+= 50){ 
+        for(int codeSize = 50; codeSize<= 150; codeSize+= 50){ 
         	
         	myself.hashFunctions = new ArrayList<HashFn>();
         	myself.addHashFunctions(codeSize);
 
-			// Step 3: Test each hash function and print the result			
+        	try{
+        	// Step 3: Test each hash function and print the result			
 			for (HashFn fn : myself.hashFunctions) {
 				double[] results = myself.calculateSuccess(fn);
 				System.out.println(codeSize + ", " + fn.getName()+", " + String.format("%.5f", results[0]) + ", " 
 				+ String.format("%.5f", results[1]) + ", " + String.format("%.5f", results[2]));
 			}//for
+			
+        	}
+        	catch(Exception e) {
+        		System.err.println(e);
+        	}
         }//for
+        
+		long tEnd = System.nanoTime();
+		
+		long totalTime = tEnd - tStart;
+		double totalSeconds = totalTime/1000000000.0;
+		double seconds = totalSeconds % 60;
+		int minutes =((int)totalSeconds) / 60;
+		int hours = minutes / 60;
+		minutes = minutes % 60;
+		
+		System.out.println("Total calulation time: " + hours + ":" + String.format("%02d", minutes) + ":" + 
+							String.format("%02.2f", seconds));
+		
     }//main
 
     

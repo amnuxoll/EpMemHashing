@@ -273,7 +273,20 @@ public class WME
     @Override
     public int hashCode()
     {
-    	return this.toString().hashCode();
+    	String ret = "";
+    	if ((this.COMPARE_TYPE & ID) > 0)
+        {
+           ret += this.id;
+        }
+        if ((this.COMPARE_TYPE & ATTR) > 0)
+        {
+            ret += this.attribute;
+        }
+        if ((this.COMPARE_TYPE & VAL) > 0)
+        {
+            ret += this.value;
+        }
+    	return ret.hashCode();
     }
     
     /**

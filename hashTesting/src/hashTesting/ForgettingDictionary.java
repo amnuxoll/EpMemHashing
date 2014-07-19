@@ -26,7 +26,7 @@ public class ForgettingDictionary extends Dictionary {
 	}
 	
 	public void addEpisode(int episodeIndex, WME[] episode){
-		ArrayList<WME> newWMEs = checkEpisode(episode);
+		ArrayList<WME> newWMEs = checkEpisode(episode, episodeIndex);
 		cleanAndAdd(newWMEs, episodeIndex);
 		
 		this.sortedEntries = this.getSortedEntryList();
@@ -43,12 +43,15 @@ public class ForgettingDictionary extends Dictionary {
 	 * @param episode to be checked
 	 * @return WME[] that contains all undiscovered WMEs from a given episode
 	 */
-	private ArrayList<WME> checkEpisode(WME[] episode) {
+	private ArrayList<WME> checkEpisode(WME[] episode, int episodeIndex) {
 		ArrayList<WME> undiscoveredWMEs = new ArrayList<WME>();
 		for(WME wme: episode){
 			
 			if(!dictionary.containsKey(wme)){
 				undiscoveredWMEs.add(wme);
+			}
+			else {
+				dictionary.get(wme).addOccurrence(episodeIndex);
 			}
 		}
 		return undiscoveredWMEs;

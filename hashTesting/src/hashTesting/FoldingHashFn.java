@@ -1,6 +1,8 @@
 package hashTesting;
 
 import java.util.*;
+import java.io.FileWriter;
+import java.io.IOException;
 
 /**
  * This is an implementation of the "folding" hash algorithm.  Each unique WME
@@ -20,6 +22,7 @@ public class FoldingHashFn extends DummyHashFn
     //keep track of all WMEs we've seen in any episode
     private ArrayList<WME> dict = new ArrayList<WME>();
     
+    private int episodeCompletedCount = 0;
     
     //ctor
     public FoldingHashFn(int size)
@@ -31,6 +34,7 @@ public class FoldingHashFn extends DummyHashFn
      * hash
      *
      * (see the comment at the top of this file)
+     * @throws IOException 
      */
 	@Override
     public int[] hash(WME[] episode)
@@ -41,6 +45,33 @@ public class FoldingHashFn extends DummyHashFn
                 dict.add(wme);
             }
         }//for
+        episodeCompletedCount++;
+        
+        if (episodeCompletedCount == 30){
+        	//print dictionary to file
+        	FileWriter outputStream = null;
+        	
+        	try {
+        		outputStream = new FileWriter("C:\\Users\\meyer14\\Desktop\\Research\\Raw Data\\FoldingDictOutput.txt");
+        		for(WME wme : dict){
+        			outputStream.write(wme.toString()); 
+        			outputStream.write("\n");
+        		}
+        	} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+        	finally {
+        		if (outputStream != null){
+        			try {
+						outputStream.close();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+        		}
+        	}
+        }
 
         //Generate an empty code (all zeroes)
         int[] code = super.hash(episode);

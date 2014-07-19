@@ -65,8 +65,7 @@ public class Dictionary
 	}//ctor
 	
 	public int getSize(){
-		int ret = this.dictionary.size();
-		return ret;
+		return this.sortedEntries.size();
 	}
 
 	
