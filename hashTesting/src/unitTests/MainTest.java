@@ -115,13 +115,13 @@ public class MainTest extends Main
         assertEquals(episodeList.size(), 60);
 
         //make sure the first and last episodes actually contain data
-        WME[] ep = episodeList.get(0);
+        WME[] ep = retrieveEpisode(0);
         assertTrue(ep.length > 0);
-        ep = episodeList.get(59);
+        ep = retrieveEpisode(59);
         assertTrue(ep.length > 0);
 
         //spot check one of those episodes
-        ep = episodeList.get(32);
+        ep = retrieveEpisode(32);
         WME wme = ep[21];
         System.out.println(wme);
         assertEquals(wme.id, "E2");
@@ -146,20 +146,18 @@ public class MainTest extends Main
         assertEquals(episodeList.size(), 3);
 
         //spot check known values in first episode
-        ArrayList<WME> ep = new ArrayList<WME>(Arrays.asList(episodeList.get(0))); 
+        ArrayList<WME> ep = new ArrayList<WME>(Arrays.asList(retrieveEpisode(0))); 
         assertTrue(ep.size() == 6);
         WME expected = new WME("(E7 ^opposite west)");
         assertTrue(ep.contains(expected));
         
         //spot check known values in third episode
-        ep = new ArrayList<WME>(Arrays.asList(episodeList.get(2))); 
+        ep = new ArrayList<WME>(Arrays.asList(retrieveEpisode(2))); 
         assertTrue(ep.size() == 7);
         WME notExpected = new WME("(E7 ^value east)");
         assertTrue(! ep.contains(notExpected));
         expected = new WME("(F1 ^bar 42)");
         assertTrue(ep.contains(expected));
-        
-        
         
     }//testLoadDeltaEpisodes
     
@@ -177,7 +175,7 @@ public class MainTest extends Main
     	assertEquals(numEpsBefore + 40, episodeList.size());
     	
     	//Verify that there is some real data in there
-    	WME[] ep = episodeList.get(numEpsBefore + 1);
+    	WME[] ep = retrieveEpisode(numEpsBefore + 1);
     	WME w = ep[ep.length / 2];
     	assertEquals(w.isValid(), true);
     	

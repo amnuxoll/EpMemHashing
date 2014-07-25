@@ -12,7 +12,6 @@ import java.io.*;
  * @version Friday May 16, 2014
  */
 
-import java.util.Calendar;
 public class Main
 {
     //constants
@@ -25,6 +24,7 @@ public class Main
     protected Random rand = new Random();
     protected ArrayList<Integer> hashCodeEpList; //keeps track of which hashes belong
     										     //to which episodes
+    protected RandomAccessFile dataFile = null; //open handle to file the episodes in episodeList were read from
     
     
     /**
@@ -48,6 +48,68 @@ public class Main
         this();
         rand = new Random(seed);
     }
+    
+    /**
+     * retrieveEpisode
+     * 
+     * returns a single episode from the list.  If the episode is already in 
+     * RAM then it just returns it, otherwise it loads the episode from the 
+     * data file.
+     * 
+     * @param epNum   the index of the episode in episodeList
+     * 
+     * @return the retreived episode represented as a list of WMEs
+     * 
+     * @throws IndexOutOfBounds exception if the given index is invalid
+     * @throws IOException if the file containing the episode can not be read
+     */
+    protected WME[] retrieveEpisode(int epNum)
+    {
+    	WME[] retVal = this.episodeList.get(epNum);
+    	
+    	//Check to see if this episode is a stub
+    	WME w = retVal[0];
+    	if (w.attribute.equals("fileoffset"))
+    	{
+            //Seek to the right position
+            long seekPos = Long.parseLong(w.value);
+            try
+            {	
+            	this.dataFile.seek(seekPos);
+		    }
+		    catch(IOException ioe) {
+		        System.err.println("Could not seek to specified location (" + seekPos + ") in file: " + dataFile);
+		        try
+		        {
+		        	this.dataFile.close();
+		        }
+		        catch(IOException ioe2) {
+		        	//don't care
+		        }
+		        return null;
+		    }
+            
+            //load the episode
+            ArrayList<WME> ep = new ArrayList<WME>();
+            String retString = loadEpisode(this.dataFile, ep);
+            
+            //Egads! O.O
+            if (retString.equals("fail"))
+            {
+    	        System.err.println("Could not read episode from file: " + dataFile);
+    	        return null;
+            }
+            else
+            {
+                retVal = ep.toArray(new WME[ep.size()]);
+            }
+
+    	}//if
+    	
+    	
+    	return retVal;
+    
+    }//retrieveEpisode
     
     /**
      * loadEpisode
@@ -171,15 +233,28 @@ public class Main
      */
     protected void loadEpisodes(String filename)
     {
+    	//If we read from another file previously, close it
+    	if (this.dataFile != null)
+    	{
+            try
+            {
+            	this.dataFile.close();
+    	    }
+    	    catch(IOException ioe) {
+    	        System.err.println("Could not close file: " + filename);
+    	    }
+            this.dataFile = null;
+    	}
+    	
         //Open the file
         File inputFile = new File(filename);
         if (! inputFile.exists()) {
             System.err.println("File does not exist: " + filename);
             return; //nothing to load
         }
-        RandomAccessFile raFile = null;
+
         try {
-            raFile = new RandomAccessFile(inputFile, "r");
+            this.dataFile = new RandomAccessFile(inputFile, "r");
         }
         catch(FileNotFoundException fnfe) {
             System.err.println("Could not open file: " + filename);
@@ -194,26 +269,42 @@ public class Main
         String retString;
         do
         {
-        	retString = loadEpisode(raFile, ep);
-        	if (! retString.equals("fail"))
+        	//record where we are now in case we need to make an episode stub
+        	long currFilePos = 0;
+        	try
         	{
-                //We now have all the WMEs for this episode, so convert the
-                //ArrayList into an array and add it to the list
+        		currFilePos = this.dataFile.getFilePointer();
+	        }
+	        catch(IOException ioe) {
+	        	System.err.println("OMG WTF Corn Flakes!");
+	            System.exit(-1);  //should never happen
+	        }
+        	
+        	//TODO: REMOVE (DEBUG)
+        	System.out.println("currFilePos = " + currFilePos);
+        	
+        	//the real work is done here
+        	retString = loadEpisode(this.dataFile, ep);
+        	
+        	if (retString.equals("delta"))
+        	{
+        		//Delta format means we have to keep episode stored in RAM.
+        		//(Otherwise we'd have to reconstruct it every time we need it.)
+                //So convert the ArrayList into an array and add it to the list
         		this.episodeList.add(ep.toArray(new WME[ep.size()]));
         	}
+        	else if (retString.equals("raw"))
+        	{
+        		//create a stub for this one
+        		WME w = new WME("(S1 ^fileoffset " + currFilePos + ")");
+        		WME[] stub = new WME[1];
+        		stub[0] = w;
+        		this.episodeList.add(stub);
+        	}
+        	
         } while(! retString.equals("fail"));
 
 
-        //ok we're done
-        try
-        {
-        	raFile.close();
-	    }
-	    catch(IOException ioe) {
-	        System.err.println("Could not close file: " + filename);
-	    }
-        
-        
     }//loadEpisodes
     
     /**
@@ -267,7 +358,7 @@ public class Main
     	//determine how many of the previous episodes will be added and 
     	//removed.  The values have a 50% chance of being zero, and 
     	//a maximum that is about 5% of the size of the previous episode
-    	WME[] lastEp = this.episodeList.get(this.episodeList.size() - 1);
+    	WME[] lastEp = retrieveEpisode(this.episodeList.size() - 1);
     	int maxChange = Math.max(1, lastEp.length / 20);  
     	int removeAmt = Math.max(0, rand.nextInt(maxChange * 2) - maxChange); 
     	int addAmt = removeAmt;
@@ -460,7 +551,7 @@ public class Main
         double uniqueSuccesses = 0;
         double similarSuccess = 0;
 
-        hashCodeList.add(fn.hash(episodeList.get(0)));
+        hashCodeList.add(fn.hash(retrieveEpisode(0)));
         hashCodeEpList.add(new Integer(0));
         
         while(currEp < episodeList.size())
@@ -478,7 +569,7 @@ public class Main
             }
 
         	//use the hashfunciton to create a hashcode for the given episode
-        	hashVal = fn.hash(episodeList.get(testEp));
+        	hashVal = fn.hash(retrieveEpisode(testEp));
         	System.out.println("Status: Testing episode " + testEp + 
         			" of " + episodeList.size() + ". CurrEp: " + currEp +  "\nHashCode: " + hashVal +
         			 " at time: " + System.currentTimeMillis());
@@ -517,6 +608,23 @@ public class Main
         return result;
         
     }//calculateSuccess
+    
+    /**
+     * cleans up open file handle at end of execution
+     */
+    public void cleanup()
+    {
+    	if (this.dataFile == null) return;
+    	
+        try
+        {
+        	this.dataFile.close();
+	    }
+	    catch(IOException ioe) {
+	        System.err.println("Could not close file");
+	    }
+    	
+    }//cleanup
     
     /**
      * Constructor for objects of class Main
@@ -577,6 +685,8 @@ public class Main
 		
 		System.out.println("Total calulation time: " + hours + ":" + String.format("%02d", minutes) + ":" + 
 							String.format("%02.2f", seconds));
+		
+		myself.cleanup();
 		
     }//main
 
