@@ -56,19 +56,27 @@ public class Main
      * This episode can be represented as a list of WMES or a list of WME 
      * changes in the standard Soar format, e.g.:
      *     =>WM: (146: O2 ^direction east)
-     * but NOT both.  The 'ep' parameter is cleared if the data is not in 
+     * but NOT both.  The 'prevEp' parameter is cleared if the data is not in 
      * delta format.
      * 
      * This method presumes episodes in the file are delimited by either 
-     * an empty line or an "--- input phase ---" string      
+     * an empty line or an "--- input phase ---" string 
+     * 
+     * When this method is done executing the prevEp will contain the episode
+     * that was just read
      * 
      * @param file      the file to read from
      * @param prevEp    the previous episode in the file, this may not be 
      *                  null but can be empty
-     * @return the episode as an array of WMEs or null if at end of file
+     * 
+     * @return a description of the episode:
+     * 			"fail" - could not read an episode from the file
+     *          "raw"   - episode was represented as a list of WMEs
+     *          "delta" - episode was represented as a delta from prev one
      */
-    protected WME[] loadEpisode(RandomAccessFile file, ArrayList<WME> prevEp)
+    protected String loadEpisode(RandomAccessFile file, ArrayList<WME> prevEp)
     {
+    	String retVal = "fail";
     	int count = 0; //number of WMEs read so far for this episode
     	String line = null;
     	try
@@ -81,9 +89,9 @@ public class Main
     	}
     	
     	//no more episodes to read
-    	if (line == null) return null;
+    	if (line == null) return retVal; //fail
     	
-        line = line.trim();
+    	line = line.trim();
         while( (line.length() > 0) && (line.indexOf("--- input phase ---") == -1) )
         {
             boolean add = true;  //are we adding or removing this WME?
@@ -91,6 +99,8 @@ public class Main
             //Check for WME add/remove
             if (line.indexOf("WM: ") != -1)
             {
+            	retVal = "delta";
+            	
                 //are we removing this WME instead of adding it?
                 if (line.indexOf("<=") == 0)
                 {
@@ -106,6 +116,7 @@ public class Main
                 //if we aren't seeing add/remove then this is a full episode
                 //specification and we want to start with an empty list
                 prevEp.clear();
+                retVal = "raw";
             }
             
             //create and add/remove a WME with this line
@@ -137,12 +148,8 @@ public class Main
             if (line == null) break;  //end-of-file or error
             line = line.trim();
         }//while
-
-        //We now have all the WMEs for this episode, so convert the
-        //ArrayList into an array and add it to the list
-        WME[] finalEp = prevEp.toArray(new WME[prevEp.size()]);
         
-        return finalEp;  	
+        return retVal;  	
     }//loadEpisode
     
 
@@ -183,16 +190,18 @@ public class Main
         episodeList.clear();
         
         //Read in all episodes in the file
-        ArrayList<WME> prevEp = new ArrayList<WME>();
-        WME[] finalEp = null;
+        ArrayList<WME> ep = new ArrayList<WME>();
+        String retString;
         do
         {
-        	finalEp = loadEpisode(raFile, prevEp);
-        	if (finalEp != null)
+        	retString = loadEpisode(raFile, ep);
+        	if (! retString.equals("fail"))
         	{
-        		this.episodeList.add(finalEp);
+                //We now have all the WMEs for this episode, so convert the
+                //ArrayList into an array and add it to the list
+        		this.episodeList.add(ep.toArray(new WME[ep.size()]));
         	}
-        } while(finalEp != null);
+        } while(! retString.equals("fail"));
 
 
         //ok we're done
