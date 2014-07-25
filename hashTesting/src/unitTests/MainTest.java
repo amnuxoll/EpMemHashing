@@ -11,6 +11,7 @@ package unitTests;
 import static org.junit.Assert.*;
 import hashTesting.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.junit.After;
 import org.junit.Before;
@@ -132,6 +133,35 @@ public class MainTest extends Main
         assertEquals(episodeList.size(), 580);  //should have 580 episodes in it
         
     }//testLoadEpisodes
+    
+    /**
+     * testLoadDeltaEpisodes
+     */
+    @Test
+    public void testLoadDeltaEpisodes()
+    {
+        loadEpisodes("unittest.txt");
+
+        //should have loaded 3 episodes
+        assertEquals(episodeList.size(), 3);
+
+        //spot check known values in first episode
+        ArrayList<WME> ep = new ArrayList<WME>(Arrays.asList(episodeList.get(0))); 
+        assertTrue(ep.size() == 6);
+        WME expected = new WME("(E7 ^opposite west)");
+        assertTrue(ep.contains(expected));
+        
+        //spot check known values in third episode
+        ep = new ArrayList<WME>(Arrays.asList(episodeList.get(2))); 
+        assertTrue(ep.size() == 7);
+        WME notExpected = new WME("(E7 ^value east)");
+        assertTrue(! ep.contains(notExpected));
+        expected = new WME("(F1 ^bar 42)");
+        assertTrue(ep.contains(expected));
+        
+        
+        
+    }//testLoadDeltaEpisodes
     
     /**
      * testGenEpisodes

@@ -1,0 +1,17 @@
+(S1 ^directions N9)
+  (N9 ^opposite south)
+  (N9 ^value north)
+(S1 ^directions E7)
+  (E7 ^opposite west)
+  (E7 ^value east)
+--- input phase ---
+(S1 ^directions N8)
+  (N8 ^opposite east)
+  (N8 ^value west)
+(S1 ^directions E7)
+  (E7 ^opposite west)
+  (E7 ^value east)
+  --- input phase --
+  =>WM: (146: S1 ^foo F1)
+  <=WM: (147: E7 ^value east)
+  =>WM: (147: F1 ^bar 42)

@@ -24,7 +24,9 @@ public class Main
     protected ArrayList<HashFn> hashFunctions; //the list of hash fns to test
     protected Random rand = new Random();
     protected ArrayList<Integer> hashCodeEpList; //keeps track of which hashes belong
-    										 //to which episodes
+    										     //to which episodes
+    
+    
     /**
      * ctor inits instance variables
      */
@@ -50,11 +52,23 @@ public class Main
     /**
      * loadEpisode
      * 
-     * loads a single episode from a file at the current file position
+     * loads a single episode from a file at the current file position.  
+     * This episode can be represented as a list of WMES or a list of WME 
+     * changes in the standard Soar format, e.g.:
+     *     =>WM: (146: O2 ^direction east)
+     * but NOT both.  The 'ep' parameter is cleared if the data is not in 
+     * delta format.
+     * 
+     * This method presumes episodes in the file are delimited by either 
+     * an empty line or an "--- input phase ---" string      
+     * 
+     * @param file      the file to read from
+     * @param prevEp    the previous episode in the file, this may not be 
+     *                  null but can be empty
+     * @return the episode as an array of WMEs or null if at end of file
      */
-    protected WME[] loadEpisode(RandomAccessFile file)
+    protected WME[] loadEpisode(RandomAccessFile file, ArrayList<WME> prevEp)
     {
-    	ArrayList<WME> ep = new ArrayList<WME>();  //
     	int count = 0; //number of WMEs read so far for this episode
     	String line = null;
     	try
@@ -63,9 +77,12 @@ public class Main
     	}
     	catch (IOException ioe)
     	{
-    		System.err.println("ERROR!  Could not read next episode from file.");
-    		return null;
+    		//assume no more episodes to read, fall through to next if-statement
     	}
+    	
+    	//no more episodes to read
+    	if (line == null) return null;
+    	
         line = line.trim();
         while( (line.length() > 0) && (line.indexOf("--- input phase ---") == -1) )
         {
@@ -88,7 +105,7 @@ public class Main
             {
                 //if we aren't seeing add/remove then this is a full episode
                 //specification and we want to start with an empty list
-                ep = new ArrayList<WME>();
+                prevEp.clear();
             }
             
             //create and add/remove a WME with this line
@@ -99,11 +116,11 @@ public class Main
             }
             if (add)
             {
-                ep.add(wme);
+                prevEp.add(wme);
             }
             else
             {
-                ep.remove(wme);
+                prevEp.remove(wme);
             }
             count++;
 
@@ -123,7 +140,7 @@ public class Main
 
         //We now have all the WMEs for this episode, so convert the
         //ArrayList into an array and add it to the list
-        WME[] finalEp = ep.toArray(new WME[ep.size()]);
+        WME[] finalEp = prevEp.toArray(new WME[prevEp.size()]);
         
         return finalEp;  	
     }//loadEpisode
@@ -153,9 +170,9 @@ public class Main
             System.err.println("File does not exist: " + filename);
             return; //nothing to load
         }
-        Scanner scan = null;
+        RandomAccessFile raFile = null;
         try {
-            scan = new Scanner(inputFile);
+            raFile = new RandomAccessFile(inputFile, "r");
         }
         catch(FileNotFoundException fnfe) {
             System.err.println("Could not open file: " + filename);
@@ -165,76 +182,27 @@ public class Main
         //Clear any old episodes in the list
         episodeList.clear();
         
-        //Read each episode from the file
-        ArrayList<WME> ep = new ArrayList<WME>();
-        int epNum = 1;
-        while(scan.hasNextLine())
+        //Read in all episodes in the file
+        ArrayList<WME> prevEp = new ArrayList<WME>();
+        WME[] finalEp = null;
+        do
         {
-            int count = 0; //number of WMEs read so far for this episode
-            String line = scan.nextLine();
-            line = line.trim();
-            while( (line.length() > 0) && (line.indexOf("--- input phase ---") == -1) )
-            {
-                boolean add = true;  //are we adding or removing this WME?
-                
-                //Check for WME add/remove
-                if (line.indexOf("WM: ") != -1)
-                {
-                    //are we removing this WME instead of adding it?
-                    if (line.indexOf("<=") == 0)
-                    {
-                        add = false;
-                    }
+        	finalEp = loadEpisode(raFile, prevEp);
+        	if (finalEp != null)
+        	{
+        		this.episodeList.add(finalEp);
+        	}
+        } while(finalEp != null);
 
-                    //Trim off the non-WME part
-                    int index = line.lastIndexOf(": ");
-                    line = "(" + line.substring(index + 2);
-                }
-                else if (count == 0)
-                {
-                    //if we aren't seeing add/remove then this is a full episode
-                    //specification and we want to start with an empty list
-                    ep = new ArrayList<WME>();
-                }
-                
-                //create and add/remove a WME with this line
-                WME wme = new WME(line);
-                if (!wme.isValid())
-                {
-                	break;
-                }
-                if (add)
-                {
-                    ep.add(wme);
-                }
-                else
-                {
-                    ep.remove(wme);
-                }
-                count++;
-
-                //read the next line
-                if (! scan.hasNextLine())
-                {
-                    break;
-                }
-                line = scan.nextLine();
-                line = line.trim();
-            }//while
-
-            //We now have all the WMEs for this episode, so convert the
-            //ArrayList into an array and add it to the list
-            WME[] finalEp = ep.toArray(new WME[ep.size()]);
-            this.episodeList.add(finalEp);
-           // System.out.println("Processed Ep #" + epNum);
-            epNum++;
-            System.out.flush();
-            if(epNum > 2300) break;
-
-        }//while
 
         //ok we're done
-        scan.close();
+        try
+        {
+        	raFile.close();
+	    }
+	    catch(IOException ioe) {
+	        System.err.println("Could not close file: " + filename);
+	    }
         
         
     }//loadEpisodes
