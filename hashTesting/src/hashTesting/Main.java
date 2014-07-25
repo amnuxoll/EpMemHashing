@@ -11,6 +11,8 @@ import java.io.*;
  * @author Allie Seibert
  * @version Friday May 16, 2014
  */
+
+import java.util.Calendar;
 public class Main
 {
     //constants
@@ -44,6 +46,87 @@ public class Main
         this();
         rand = new Random(seed);
     }
+    
+    /**
+     * loadEpisode
+     * 
+     * loads a single episode from a file at the current file position
+     */
+    protected WME[] loadEpisode(RandomAccessFile file)
+    {
+    	ArrayList<WME> ep = new ArrayList<WME>();  //
+    	int count = 0; //number of WMEs read so far for this episode
+    	String line = null;
+    	try
+    	{
+    		line = file.readLine();
+    	}
+    	catch (IOException ioe)
+    	{
+    		System.err.println("ERROR!  Could not read next episode from file.");
+    		return null;
+    	}
+        line = line.trim();
+        while( (line.length() > 0) && (line.indexOf("--- input phase ---") == -1) )
+        {
+            boolean add = true;  //are we adding or removing this WME?
+            
+            //Check for WME add/remove
+            if (line.indexOf("WM: ") != -1)
+            {
+                //are we removing this WME instead of adding it?
+                if (line.indexOf("<=") == 0)
+                {
+                    add = false;
+                }
+
+                //Trim off the non-WME part
+                int index = line.lastIndexOf(": ");
+                line = "(" + line.substring(index + 2);
+            }
+            else if (count == 0)
+            {
+                //if we aren't seeing add/remove then this is a full episode
+                //specification and we want to start with an empty list
+                ep = new ArrayList<WME>();
+            }
+            
+            //create and add/remove a WME with this line
+            WME wme = new WME(line);
+            if (!wme.isValid())
+            {
+            	break;
+            }
+            if (add)
+            {
+                ep.add(wme);
+            }
+            else
+            {
+                ep.remove(wme);
+            }
+            count++;
+
+            //read the next line
+            line = null;
+        	try
+        	{
+        		line = file.readLine();
+        	}
+        	catch (IOException ioe)
+        	{
+        		System.err.println("IO Error reading episode.  Assuming end of episode.");
+        	}
+            if (line == null) break;  //end-of-file or error
+            line = line.trim();
+        }//while
+
+        //We now have all the WMEs for this episode, so convert the
+        //ArrayList into an array and add it to the list
+        WME[] finalEp = ep.toArray(new WME[ep.size()]);
+        
+        return finalEp;  	
+    }//loadEpisode
     
 
     /**
@@ -84,6 +167,7 @@ public class Main
         
         //Read each episode from the file
         ArrayList<WME> ep = new ArrayList<WME>();
+        int epNum = 1;
         while(scan.hasNextLine())
         {
             int count = 0; //number of WMEs read so far for this episode
@@ -142,6 +226,10 @@ public class Main
             //ArrayList into an array and add it to the list
             WME[] finalEp = ep.toArray(new WME[ep.size()]);
             this.episodeList.add(finalEp);
+           // System.out.println("Processed Ep #" + epNum);
+            epNum++;
+            System.out.flush();
+            if(epNum > 2300) break;
 
         }//while
 
@@ -159,13 +247,13 @@ public class Main
     public void addHashFunctions(int codeSize)
     {
     	
-    	hashFunctions.add(new ModularFSSHFn(codeSize, 0.06, 0.25));
-    	hashFunctions.add(new ModularFSSHFn(codeSize, 0.06, 1));
-    	hashFunctions.add(new ModularFSSHFn(codeSize, 0.06, 500));
+    	//hashFunctions.add(new ModularFSSHFn(codeSize, 0.06, 0.25));
+    	//hashFunctions.add(new ModularFSSHFn(codeSize, 0.06, 1));
+    	hashFunctions.add(new ModularFSSHFn(codeSize, 0.06, 5));
     	
-    	hashFunctions.add(new DynamicSSFn(codeSize, 0.06, 0.25));
-    	hashFunctions.add(new DynamicSSFn(codeSize, 0.06, 0.5));
-    	hashFunctions.add(new DynamicSSFn(codeSize, 0.06, 1.0));
+    	//hashFunctions.add(new DynamicSSFn(codeSize, 0.06, 0.25));
+    	//hashFunctions.add(new DynamicSSFn(codeSize, 0.06, 0.5));
+    	//hashFunctions.add(new DynamicSSFn(codeSize, 0.06, 1.0));
     	
     	
     	
@@ -414,7 +502,9 @@ public class Main
 
         	//use the hashfunciton to create a hashcode for the given episode
         	hashVal = fn.hash(episodeList.get(testEp));
-
+        	System.out.println("Status: Testing episode " + testEp + 
+        			" of " + episodeList.size() + ". CurrEp: " + currEp +  "\nHashCode: " + hashVal +
+        			 " at time: " + System.currentTimeMillis());
         	//test the selected episode and record the result
         	if(!testPrevious){
         		if(findHash(hashVal) < 0){
@@ -458,16 +548,29 @@ public class Main
     {
         Main myself = new Main();
         
-        //Step 1:  load the data from the file specified in input[0]
-        myself.loadEpisodes("log_tanksoar_changesonly.txt");
         
+        long loadStart = System.nanoTime();
+        //Step 1:  load the data from the file specified in input[0]
+        myself.loadEpisodes("video.log");
+        long loadEnd = System.nanoTime();
+        
+        
+        long loadTime = loadEnd - loadStart;
+		double loadSeconds = loadTime/1000000000.0;
+		double lSeconds = loadSeconds % 60;
+		int lMinutes =((int)loadSeconds) / 60;
+		int lHours = lMinutes / 60;
+		lMinutes = lMinutes % 60;
+		
+		System.out.println("Total load time: " + lHours + ":" + String.format("%02d", lMinutes) + ":" + 
+				String.format("%02.2f", lSeconds));
         
         System.out.println("CodeSize, Name, Unique, Recurring, Similar");
         
         long tStart = System.nanoTime();
         
         //Step 2:  Iterate over a range of hash code sizes
-        for(int codeSize = 50; codeSize<= 150; codeSize+= 50){ 
+        for(int codeSize = 50; codeSize<= 50; codeSize+= 50){ 
         	
         	myself.hashFunctions = new ArrayList<HashFn>();
         	myself.addHashFunctions(codeSize);

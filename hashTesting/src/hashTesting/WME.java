@@ -270,19 +270,20 @@ public class WME
     }//equals
     
 
-    @Override
+    @SuppressWarnings("unused")
+	@Override
     public int hashCode()
     {
     	String ret = "";
-    	if ((this.COMPARE_TYPE & ID) > 0)
+    	if ((WME.COMPARE_TYPE & ID) > 0)
         {
            ret += this.id;
         }
-        if ((this.COMPARE_TYPE & ATTR) > 0)
+        if ((WME.COMPARE_TYPE & ATTR) > 0)
         {
             ret += this.attribute;
         }
-        if ((this.COMPARE_TYPE & VAL) > 0)
+        if ((WME.COMPARE_TYPE & VAL) > 0)
         {
             ret += this.value;
         }
