@@ -29,6 +29,10 @@ public class HashCodeList {
 		this.hashCodes = new int[maxSize][];
 		this.refEpisode = new int[maxSize];
 		this.cache = new EpisodeCache(maxSize);
+		
+		for(int i = 0; i < maxSize; i++){
+			hashCodes[i][0] = -1;
+		}
 	}
 	
 	/** 
@@ -46,10 +50,23 @@ public class HashCodeList {
 	 * Add a hash code to the list and return the removed code if one exists
 	 * 
 	 * @param code The new code to be added to the cache.
-	 * @return The hash code that was removed.
+	 * @return The hash code that was removed. Null if no code was removed.
 	 */
 	public int[] addCode(int[] code){
-		return null;
+		//First check if there are any open spots available.
+		for(int i = 0; i < this.hashCodes.length; i++){
+			if(this.hashCodes[i][0] == -1){
+				this.hashCodes[i] = code;
+				return null;
+			}
+		}
+		
+		//List is full, find the hash to be replaced.
+		int swapIndex = findBestMatchIndex(code);
+		int[] retCode = get(swapIndex);
+		hashCodes[swapIndex] = code;		
+		
+		return retCode;
 	}
 	
 	/**
@@ -59,6 +76,17 @@ public class HashCodeList {
 	 * @return The best matching hash code.
 	 */
 	public int[] findBestMatch(int[] code){
+		int index = findBestMatchIndex(code);
+		
+		return this.get(index);
+	}
+	
+	/**
+	 * 
+	 * @param code
+	 * @return
+	 */
+	public int findBestMatchIndex(int[] code){
 		int[][][] scores = new int[hashCodes.length][2][];
 		for(int i = 0; i < scores.length; i++){
 			scores[i][0][0] = hashCompare(code, hashCodes[i]);
@@ -75,8 +103,7 @@ public class HashCodeList {
 			}
 		}
 		
-		
-		return scores[bestIndex][1];
+		return bestIndex;
 	}
 	
 	/**

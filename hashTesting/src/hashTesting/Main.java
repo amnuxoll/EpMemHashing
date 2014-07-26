@@ -339,7 +339,7 @@ public class Main
 //    	}//for
             	
     	
-    	fn = new ModularFSSHFn(codeSize, 0.06, 1.75);
+    	fn = new DynamicSSFn(codeSize, 0.06, 0.01);
     	dict = new ForgettingDictionary(((SweetSpotHashFn)fn).getCompareType(), 1000000);
     	((SweetSpotHashFn)fn).setDictionary(dict);
     	hashFunctions.add(fn);

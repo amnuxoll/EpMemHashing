@@ -16,7 +16,7 @@ public class EpisodeCache {
 	protected WME[][] cache;
 	
 	/**
-	 * Ctor for an EpisodeCache which contains a set of epsiodes that are used for reference.
+	 * Ctor for an EpisodeCache which contains a set of episodes that are used for reference.
 	 * 
 	 * @param sizeOfCache the maximum number of episodes that can be contained within the cache.
 	 */
