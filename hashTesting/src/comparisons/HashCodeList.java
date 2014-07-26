@@ -14,10 +14,10 @@ import hashTesting.WME;
 
 public class HashCodeList {
 
-	private int[][] hashCodes;
-	private int[] refEpisode;
-	private EpisodeCache cache;
-	private HashFn fn;
+	protected int[][] hashCodes;
+	protected int[] refEpisode;
+	protected EpisodeCache cache;
+	protected HashFn fn;
 	
 	/**
 	 * Ctor for the HashCodeList which is a list of hash codes that are used
@@ -26,7 +26,20 @@ public class HashCodeList {
 	 * @param maxSize Max number of hash codes in list.
 	 */
 	public HashCodeList(int maxSize){
-		
+		this.hashCodes = new int[maxSize][];
+		this.refEpisode = new int[maxSize];
+		this.cache = new EpisodeCache(maxSize);
+	}
+	
+	/** 
+	 * Ctor for the HashCodeList that takes a function for reconstruction as well.
+	 * 
+	 * @param maxSize Max number of hash codes in list.
+	 * @param func The function that is used for reconstruction.
+	 */
+	public HashCodeList(int maxSize, HashFn func){
+		this(maxSize);
+		this.fn = func;
 	}
 	
 	/**
@@ -46,7 +59,24 @@ public class HashCodeList {
 	 * @return The best matching hash code.
 	 */
 	public int[] findBestMatch(int[] code){
-		return null;
+		int[][][] scores = new int[hashCodes.length][2][];
+		for(int i = 0; i < scores.length; i++){
+			scores[i][0][0] = hashCompare(code, hashCodes[i]);
+			scores[i][1] = hashCodes[i];
+		}
+		
+		int bestScore = Integer.MAX_VALUE;
+		int bestIndex = -1;
+		
+		for(int i = 0; i < scores.length; i++){
+			if (scores[i][0][0] < bestScore){
+				bestScore = scores[i][0][0];
+				bestIndex = i;
+			}
+		}
+		
+		
+		return scores[bestIndex][1];
 	}
 	
 	/**
@@ -56,7 +86,7 @@ public class HashCodeList {
 	 * @return The hash code at the given index.
 	 */
 	public int[] get(int index){
-		return null;
+		return this.hashCodes[index];
 	}
 	
 	/**
@@ -69,6 +99,14 @@ public class HashCodeList {
 	}
 	
 	/**
+	 * Sets the hash function to be used in reconstruction.
+	 * @param fn The hash function to be used.
+	 */
+	public void setHashFn(HashFn func){
+		this.fn = func;
+	}
+	
+	/**
 	 * Compares two hash codes based upon their difference in bits (XORed and then finding the number of bits that are still '1').
 	 * Ordering does not matter, hashCompare(code1, code2) will always equal hashCompare(code2, code1).
 	 * 
@@ -76,8 +114,19 @@ public class HashCodeList {
 	 * @param code2 The second code being compared
 	 * @return The uniqueness score, the lower the number the less unique the episodes are in relation to each other.
 	 */
-	private int hashCompare(int[] code1, int[] code2){
-		return Integer.MAX_VALUE;
+	protected int hashCompare(int[] code1, int[] code2){
+		int[] xorCode = new int[code1.length];
+		
+		for(int i = 0; i < xorCode.length; i++){
+			xorCode[i] = code1[i]^code2[i];
+		}
+		
+		int retVal = 0;
+		for(int v: xorCode){
+			if (v != 0) retVal++;
+		}
+		
+		return retVal;
 	}
 	
 }

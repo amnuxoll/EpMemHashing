@@ -13,7 +13,7 @@ import hashTesting.WME;
 
 public class EpisodeCache {
 	
-	private WME[][] cache;
+	protected WME[][] cache;
 	
 	/**
 	 * Ctor for an EpisodeCache which contains a set of epsiodes that are used for reference.
@@ -44,7 +44,10 @@ public class EpisodeCache {
 	 * @return The episode that was removed from the cache. Null if no episode was removed (no episode at that index).
 	 */
 	public WME[] addEpisode(WME[] newEpisode, int index){
-		return null;
+		WME[] ret = cache[index];
+		cache[index] = newEpisode;
+		
+		return ret;
 	}
 	
 	/**
@@ -54,7 +57,9 @@ public class EpisodeCache {
 	 * @return The episode that has been removed.
 	 */
 	public WME[] removeEpisode(int index){
-		return null;
+		WME[] ret = cache[index];
+		cache[index] = null;
+		return ret;
 	}
 	
 	/**
@@ -86,7 +91,7 @@ public class EpisodeCache {
 	 * @return The uniqueness score, the lower the number the less unique the first episode is in comparison to
 	 * 		   the second episode.
 	 */
-	private int wmeCompare(WME[] ep1, WME[] ep2){
+	protected int wmeCompare(WME[] ep1, WME[] ep2){
 		return Integer.MAX_VALUE;
 	}
 	
