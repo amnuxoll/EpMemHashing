@@ -280,9 +280,6 @@ public class Main
 	            System.exit(-1);  //should never happen
 	        }
         	
-        	//TODO: REMOVE (DEBUG)
-        	System.out.println("currFilePos = " + currFilePos);
-        	
         	//the real work is done here
         	retString = loadEpisode(this.dataFile, ep);
         	
@@ -317,7 +314,7 @@ public class Main
     	
     	//hashFunctions.add(new ModularFSSHFn(codeSize, 0.06, 0.25));
     	//hashFunctions.add(new ModularFSSHFn(codeSize, 0.06, 1));
-    	hashFunctions.add(new ModularFSSHFn(codeSize, 0.06, 5));
+    	//hashFunctions.add(new ModularFSSHFn(codeSize, 0.06, 5));
     	
     	//hashFunctions.add(new DynamicSSFn(codeSize, 0.06, 0.25));
     	//hashFunctions.add(new DynamicSSFn(codeSize, 0.06, 0.5));
@@ -325,10 +322,10 @@ public class Main
     	
     	
     	
-//    	HashFn mod; 
+    	HashFn fn; 
 //    	HashFn dynamic;
 //    	
-//    	Dictionary dict;
+    	Dictionary dict;
 //    	for (int i = 3; i <= 9; i = i + 3){
 //    		mod = new ModularFSSHFn(codeSize, 0.06, 1.75);
 //    		dict = new ForgettingDictionary(((SweetSpotHashFn)mod).getCompareType(), i * 1000);
@@ -341,6 +338,12 @@ public class Main
 //	    	hashFunctions.add(dynamic);
 //    	}//for
             	
+    	
+    	fn = new ModularFSSHFn(codeSize, 0.06, 1.75);
+    	dict = new ForgettingDictionary(((SweetSpotHashFn)fn).getCompareType(), 1000000);
+    	((SweetSpotHashFn)fn).setDictionary(dict);
+    	hashFunctions.add(fn);
+    	
     }//addHashFunctions
     
     /**
@@ -570,9 +573,9 @@ public class Main
 
         	//use the hashfunciton to create a hashcode for the given episode
         	hashVal = fn.hash(retrieveEpisode(testEp));
-        	System.out.println("Status: Testing episode " + testEp + 
-        			" of " + episodeList.size() + ". CurrEp: " + currEp +  "\nHashCode: " + hashVal +
-        			 " at time: " + System.currentTimeMillis());
+//        	System.out.println("Status: Testing episode " + testEp + 
+//        			" of " + episodeList.size() + ". CurrEp: " + currEp +  "\nHashCode: " + hashVal +
+//        			 " at time: " + System.currentTimeMillis());
         	//test the selected episode and record the result
         	if(!testPrevious){
         		if(findHash(hashVal) < 0){
@@ -655,7 +658,7 @@ public class Main
         long tStart = System.nanoTime();
         
         //Step 2:  Iterate over a range of hash code sizes
-        for(int codeSize = 50; codeSize<= 50; codeSize+= 50){ 
+        for(int codeSize = 10; codeSize<= 150; codeSize+= 10){ 
         	
         	myself.hashFunctions = new ArrayList<HashFn>();
         	myself.addHashFunctions(codeSize);
