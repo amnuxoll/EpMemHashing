@@ -37,7 +37,6 @@ public class HashCodeListTest extends HashCodeList {
 	}
 	
 	
-	//TODO: Implement this test
 	@Test
 	public void testFindBestMatch(){
 		int[] testCode = {0, 1, 1, 0, 0, 1, 0, 1, 0, 1};
@@ -46,7 +45,6 @@ public class HashCodeListTest extends HashCodeList {
 		assertEquals(closestMatch, testCode);
 	}
 
-	//TODO: Implement this test
 	@Test 
 	public void testFindMatchIndex(){
 		int[] testCode = {0, 1, 1, 0, 0, 1, 0, 1, 0, 1};

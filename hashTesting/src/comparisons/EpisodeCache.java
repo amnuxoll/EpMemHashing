@@ -52,7 +52,7 @@ public class EpisodeCache {
 			return newEpisode;
 		}
 		
-		int scoreSize = (int) ((Math.pow(this.cache.length + 1, 2) - this.cache.length));
+		int scoreSize = (int) ((Math.pow(this.cache.length + 1, 2) - (this.cache.length + 1)));
 		int[][] scores = new int[scoreSize][3];
 		int curIndex = 0;
 
@@ -89,6 +89,10 @@ public class EpisodeCache {
 			}
 		}
 		
+		if(bestIndex == Integer.MAX_VALUE){
+			return newEpisode;
+		}
+		
 		retEp = get(bestIndex);
 		
 		for(int i = bestIndex; i < this.cache.length - 1; i++){
@@ -98,8 +102,7 @@ public class EpisodeCache {
 		this.cache[this.cache.length - 1] = newEpisode;
 		return retEp;
 	}
-	
-	
+		
 	/**
 	 * Add an episode to the cache at the specified index and return the removed episode if one exists.
 	 * 
@@ -147,13 +150,11 @@ public class EpisodeCache {
 	 * @return
 	 */
 	public int findBestMatchIndex(WME[] cue){
-		int[][] scores = new int[this.cache.length * (this.cache.length - 1)][2];
-		int currentIndex = 0;
+		int[][] scores = new int[this.cache.length][2];
 		
 		for(int i = 0; i < this.cache.length; i++){
-				scores[currentIndex][0] = wmeCompare(this.cache[i], cue);
-				scores[currentIndex][1] = i;
-				currentIndex++;
+				scores[i][0] = wmeCompare(this.cache[i], cue);
+				scores[i][1] = i;
 		}
 		
 		int bestScore = Integer.MAX_VALUE;
