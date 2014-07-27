@@ -144,18 +144,11 @@ public class HashCodeList {
 	 */
 	protected int hashCompare(int[] code1, int[] code2){
 		int[] xorCode = new int[code1.length];
+		
 		if(code1 == null || code2 == null){
 			return Integer.MAX_VALUE;
 		}
-		for(int i = 0; i < code1.length; i++){
-			System.out.print(code1[i]);
-		}
-		System.out.println();
-		for(int i = 0; i < code2.length; i++){
-			System.out.print(code2[i]);
-		}
-		System.out.println();
-		System.out.println();
+		
 		for(int i = 0; i < xorCode.length; i++){
 			xorCode[i] = code1[i]^code2[i];
 		}
