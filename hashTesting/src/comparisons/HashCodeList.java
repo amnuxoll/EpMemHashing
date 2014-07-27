@@ -30,9 +30,9 @@ public class HashCodeList {
 		this.refEpisode = new int[maxSize];
 		this.cache = new EpisodeCache(maxSize);
 		
-		for(int i = 0; i < maxSize; i++){
-			hashCodes[i][0] = -1;
-		}
+//		for(int i = 0; i < maxSize; i++){
+//			hashCodes[i][0] = -1;
+//		}
 	}
 	
 	/** 
@@ -55,7 +55,7 @@ public class HashCodeList {
 	public int[] addCode(int[] code){
 		//First check if there are any open spots available.
 		for(int i = 0; i < this.hashCodes.length; i++){
-			if(this.hashCodes[i][0] == -1){
+			if(this.hashCodes[i] == null){
 				this.hashCodes[i] = code;
 				return null;
 			}
@@ -89,6 +89,7 @@ public class HashCodeList {
 	public int findBestMatchIndex(int[] code){
 		int[][][] scores = new int[hashCodes.length][2][];
 		for(int i = 0; i < scores.length; i++){
+			scores[i][0] = new int[1];
 			scores[i][0][0] = hashCompare(code, hashCodes[i]);
 			scores[i][1] = hashCodes[i];
 		}
@@ -143,7 +144,18 @@ public class HashCodeList {
 	 */
 	protected int hashCompare(int[] code1, int[] code2){
 		int[] xorCode = new int[code1.length];
-		
+		if(code1 == null || code2 == null){
+			return Integer.MAX_VALUE;
+		}
+		for(int i = 0; i < code1.length; i++){
+			System.out.print(code1[i]);
+		}
+		System.out.println();
+		for(int i = 0; i < code2.length; i++){
+			System.out.print(code2[i]);
+		}
+		System.out.println();
+		System.out.println();
 		for(int i = 0; i < xorCode.length; i++){
 			xorCode[i] = code1[i]^code2[i];
 		}
