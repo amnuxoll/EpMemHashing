@@ -52,7 +52,50 @@ public class EpisodeCache {
 			return newEpisode;
 		}
 		
-		cache[swapIndex] = newEpisode;
+		int scoreSize = (int) ((Math.pow(this.cache.length + 1, 2) - this.cache.length));
+		int[][] scores = new int[scoreSize][3];
+		int curIndex = 0;
+
+		for(int i = 0; i < this.cache.length; i++){
+			for(int j = 0; j < this.cache.length; j++){
+				if (i == j) continue;
+				scores[curIndex][0] = wmeCompare(this.cache[i], this.cache[j]);
+				scores[curIndex][1] = i;
+				scores[curIndex][2] = j;
+				curIndex++;
+			}
+			scores[curIndex][0] = wmeCompare(this.cache[i], newEpisode);
+			scores[curIndex][1] = i;
+			scores[curIndex][2] = Integer.MAX_VALUE;
+			curIndex++;
+			
+			scores[curIndex][0] = wmeCompare(newEpisode, this.cache[i]);
+			scores[curIndex][1] = Integer.MAX_VALUE;
+			scores[curIndex][2] = i;
+			curIndex++;
+		}
+		
+		
+		int bestScore = Integer.MAX_VALUE;
+		int bestIndex = Integer.MAX_VALUE;
+		
+		for(int i = 0; i < scores.length; i++){
+			if(scores[i][0] < bestScore){
+				bestScore = scores[i][0];
+				bestIndex = scores[i][1];
+			}
+			else if(scores[i][0] == bestScore && scores[i][1] < bestIndex){
+				bestIndex = scores[i][1];
+			}
+		}
+		
+		retEp = get(bestIndex);
+		
+		for(int i = bestIndex; i < this.cache.length - 1; i++){
+			this.cache[i] = this.cache[i+1];
+		}
+		
+		this.cache[this.cache.length - 1] = newEpisode;
 		return retEp;
 	}
 	
@@ -79,7 +122,10 @@ public class EpisodeCache {
 	 */
 	public WME[] removeEpisode(int index){
 		WME[] ret = cache[index];
-		cache[index] = null;
+		for(int i = index; i < cache.length - 1; i++){
+			cache[i] = cache[i+1];
+		}
+		cache[cache.length - 1] = null;
 		return ret;
 	}
 	
@@ -101,7 +147,7 @@ public class EpisodeCache {
 	 * @return
 	 */
 	public int findBestMatchIndex(WME[] cue){
-		int[][] scores = new int[this.cache.length * (this.cache.length -1)][2];
+		int[][] scores = new int[this.cache.length * (this.cache.length - 1)][2];
 		int currentIndex = 0;
 		
 		for(int i = 0; i < this.cache.length; i++){
@@ -112,21 +158,18 @@ public class EpisodeCache {
 		
 		int bestScore = Integer.MAX_VALUE;
 		int bestEp = -1;
-		int bestIndex = -1;
 		
 		for(int i = 0; i < scores.length; i++){
 			if (scores[i][0] < bestScore){
 				bestScore = scores[i][0];
 				bestEp = scores[i][1];
-				bestIndex = i;
 			}
 			else if((scores[i][0] == bestScore) && (scores[i][1] < bestEp)){
 				bestEp = scores[i][1];
-				bestIndex = i;
 			}
 		}
 		
-		return bestIndex;
+		return bestEp;
 	}
 	
 	/**

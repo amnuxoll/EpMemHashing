@@ -60,12 +60,49 @@ public class HashCodeList {
 				return null;
 			}
 		}
-		
+
 		//List is full, find the hash to be replaced.
-		int swapIndex = findBestMatchIndex(code);
-		int[] retCode = get(swapIndex);
-		hashCodes[swapIndex] = code;		
+		int scoreSize = (int) ((Math.pow(this.hashCodes.length + 1, 2) - this.hashCodes.length) / 2);
+		int[][] scores = new int[scoreSize][3];
+		int curIndex = 0;
+
+		for(int i = 0; i < this.hashCodes.length - 1; i++){
+			for(int j = i + 1; j < this.hashCodes.length; j++){
+				scores[curIndex][0] = hashCompare(this.hashCodes[i], this.hashCodes[j]);
+				scores[curIndex][1] = i;
+				scores[curIndex][2] = j;
+				curIndex++;
+			}
+			scores[curIndex][0] = hashCompare(this.hashCodes[i], code);
+			scores[curIndex][1] = i;
+			scores[curIndex][2] = Integer.MAX_VALUE;
+			curIndex++;
+		}
 		
+		scores[curIndex][0] = hashCompare(this.hashCodes[this.hashCodes.length - 1], code);
+		scores[curIndex][1] = this.hashCodes.length - 1;
+		scores[curIndex][2] = Integer.MAX_VALUE;
+		
+		int bestScore = Integer.MAX_VALUE;
+		int bestHashIndex = Integer.MAX_VALUE;
+		
+		for(int i = 0; i < scores.length; i++){
+			if(scores[i][0] < bestScore){
+				bestScore = scores[i][0];
+				bestHashIndex = scores[i][1];
+			}
+			else if(scores[i][0] == bestScore && scores[i][1] < bestHashIndex){
+				bestHashIndex = scores[i][1];
+			}
+		}
+		
+		int[] retCode = get(bestHashIndex);
+		
+		for(int i = bestHashIndex; i < this.hashCodes.length - 1; i++){
+			this.hashCodes[i] = this.hashCodes[i+1];
+		}
+		
+		this.hashCodes[this.hashCodes.length - 1] = code;
 		return retCode;
 	}
 	
