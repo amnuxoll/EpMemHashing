@@ -1,5 +1,8 @@
 package comparisons;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import hashTesting.WME;
 
 /**
@@ -32,7 +35,25 @@ public class EpisodeCache {
 	 * @return The episode that was removed from the cache. Null if no episode was removed (cache is not full).
 	 */
 	public WME[] addEpisode(WME[] newEpisode){		
-		return null;
+		
+		//First check if there are any open spots available.
+		for(int i = 0; i < this.cache.length; i++){
+			if (this.cache[i] == null){
+				this.cache[i] = newEpisode;
+				return null;
+			}
+		}
+		
+		//List is full, find the episode to be replaced.
+		int swapIndex = findBestMatchIndex(newEpisode);
+		WME[] retEp = get(swapIndex);
+		if (wmeCompare(newEpisode, retEp) == 0){
+			//New episode is completely contained within another episode. Do not add to cache.
+			return newEpisode;
+		}
+		
+		cache[swapIndex] = newEpisode;
+		return retEp;
 	}
 	
 	
@@ -69,7 +90,43 @@ public class EpisodeCache {
 	 * @return The best matching episode.
 	 */
 	public WME[] findBestMatch(WME[] cue){
-		return null;
+		int index = findBestMatchIndex(cue);
+		
+		return this.get(index);
+	}
+	
+	/**
+	 * 
+	 * @param cue
+	 * @return
+	 */
+	public int findBestMatchIndex(WME[] cue){
+		int[][] scores = new int[this.cache.length * (this.cache.length -1)][2];
+		int currentIndex = 0;
+		
+		for(int i = 0; i < this.cache.length; i++){
+				scores[currentIndex][0] = wmeCompare(this.cache[i], cue);
+				scores[currentIndex][1] = i;
+				currentIndex++;
+		}
+		
+		int bestScore = Integer.MAX_VALUE;
+		int bestEp = -1;
+		int bestIndex = -1;
+		
+		for(int i = 0; i < scores.length; i++){
+			if (scores[i][0] < bestScore){
+				bestScore = scores[i][0];
+				bestEp = scores[i][1];
+				bestIndex = i;
+			}
+			else if((scores[i][0] == bestScore) && (scores[i][1] < bestEp)){
+				bestEp = scores[i][1];
+				bestIndex = i;
+			}
+		}
+		
+		return bestIndex;
 	}
 	
 	/**
@@ -92,7 +149,23 @@ public class EpisodeCache {
 	 * 		   the second episode.
 	 */
 	protected int wmeCompare(WME[] ep1, WME[] ep2){
-		return Integer.MAX_VALUE;
+		if (ep1 == null){
+			return 0;
+		}
+		
+		if (ep2 == null){
+			return ep1.length;
+		}
+		
+		ArrayList<WME> ep1List = new ArrayList<WME>(Arrays.asList(ep1));
+		ArrayList<WME> ep2List = new ArrayList<WME>(Arrays.asList(ep2));
+		for(WME wme: ep2List){
+			if(ep1List.contains(wme)){
+				ep1List.remove(wme);
+			}
+		}
+		
+		return ep1List.size();
 	}
 	
 
