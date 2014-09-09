@@ -338,7 +338,6 @@ public class Main
 //	    	hashFunctions.add(dynamic);
 //    	}//for
             	
-    	
     	fn = new DynamicSSFn(codeSize, 0.06, 0.01);
     	dict = new ForgettingDictionary(((SweetSpotHashFn)fn).getCompareType(), 1000000);
     	((SweetSpotHashFn)fn).setDictionary(dict);
@@ -630,6 +629,21 @@ public class Main
     }//cleanup
     
     /**
+     * This is a data gathering function that can be called to print info about how often each WME appears
+     */
+    public void printWMEUseInfo()
+    {
+    	System.out.println("WME,Num Occur");
+    	Dictionary dict = new Dictionary(this.episodeList, WME.ATTR+WME.VAL);
+    	for(int i = 0; i < dict.getSize(); ++i)
+    	{
+    		Entry e = dict.getEntryAt(i);
+    		System.out.println("" + e.getWME() + "," + e.getNumOccurrences());
+    	}
+    	System.out.println("TOTAL," + dict.getSize());
+    }
+    
+    /**
      * Constructor for objects of class Main
      */
     public static void main(String [] input)
@@ -639,10 +653,9 @@ public class Main
         
         long loadStart = System.nanoTime();
         //Step 1:  load the data from the file specified in input[0]
-        myself.loadEpisodes("video.log");
+        myself.loadEpisodes("log_eaters_changesonly2.txt");
         long loadEnd = System.nanoTime();
-        
-        
+
         long loadTime = loadEnd - loadStart;
 		double loadSeconds = loadTime/1000000000.0;
 		double lSeconds = loadSeconds % 60;
